@@ -1,0 +1,12 @@
+{
+  "type": "number",
+  "title": {
+    "en": "RSSI"
+  },
+  "getable": true,
+  "setable": false,
+  "units": {
+    "en": "dBm"
+  },
+  "decimals": 0
+}

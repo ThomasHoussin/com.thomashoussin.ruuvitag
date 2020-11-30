@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.homeycompose",
+    "\\.homeycompose\\capabilities",
+    "\\.homeycompose\\drivers",
+    "\\.homeycompose\\flow",
+    "\\drivers",
+    "\\drivers\\ruuvitag"
+  ],
+  "SelectedNode": "\\drivers\\ruuvitag\\device.js",
+  "PreviewInSolutionExplorer": false
+}

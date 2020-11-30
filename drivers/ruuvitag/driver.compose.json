@@ -1,0 +1,63 @@
+{
+  "id": "ruuvitag",
+  "name": {
+    "en": "RuuviTag"
+  },
+  "class": "sensor",
+  "capabilities": [
+    "measure_battery",
+    "measure_humidity",
+    "measure_pressure",
+    "measure_temperature",
+    "measure_rssi"
+  ],
+  "images": {
+    "large": "/drivers/ruuvitag/assets/images/large.png",
+    "small": "/drivers/ruuvitag/assets/images/small.png"
+  },
+  "energy": {
+    "batteries": [ "CR2477" ]
+  },
+  "settings": [
+    {
+      "id": "batt_mini",
+      "type": "number",
+      "value": 2000,
+      "label": {
+        "en": "Minimum value for battery voltage, in mV"
+      }
+    },
+    {
+      "id": "batt_maxi",
+      "type": "number",
+      "value": 3000,
+      "label": {
+        "en": "Maximum value for battery voltage, in mV"
+      }
+    },
+    {
+      "id": "polling_interval",
+      "type": "number",
+      "value": 300,
+      "label": {
+        "en": "Polling interval for data collection, in seconds"
+      }
+    }
+  ],
+  "pair": [
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      },
+      "options": {
+        "singular": false
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

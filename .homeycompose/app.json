@@ -1,0 +1,26 @@
+{
+  "id": "com.thomashoussin.ruuvitag",
+  "version": "0.0.1",
+  "compatibility": ">=3.1.0",
+  "sdk": 2,
+  "name": {
+    "en": "RuuviTag"
+  },
+  "description": {
+    "en": "Adds support for RuuviTag Bluetooth Sensor"
+  },
+  "category": [
+    "appliances"
+  ],
+  "permissions": [
+    "homey:wireless:ble"
+  ],
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
+  },
+  "author": {
+    "name": "Thomas Houssin",
+    "email": "thomas.houssin@gmail.com"
+  }
+}
