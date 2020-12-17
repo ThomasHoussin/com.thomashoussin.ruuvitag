@@ -1,13 +1,13 @@
 {
   "type": "number",
   "title": {
-    "en": "RSSI"
+    "en": "Acceleration"
   },
   "getable": true,
   "setable": false,
-  "icon": "/assets/rssi.svg",
+  "icon": "/assets/acceleration.svg",
   "units": {
-    "en": "dBm"
+    "en": "g"
   },
-  "decimals": 0
+  "decimals": 1
 }

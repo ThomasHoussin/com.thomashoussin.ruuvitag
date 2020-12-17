@@ -24,7 +24,6 @@ class RuuviTag extends Homey.Driver {
                 this.log(error);
                 callback(new Error(Homey.__('list devices error')));
             });
-
   }
 
 }
@@ -35,13 +34,12 @@ function discoverRuuviDevices(driver){
     return new Promise(async (resolve, reject) => {
 
         console.log("Searching for Ruuvi devices...")
-        const timeout = 29000;
 
         try {
             let devices = [];     
             const ManufacturerID = Buffer.from('9904', 'hex');
 
-            const foundDevices = await Homey.ManagerBLE.discover([], timeout);
+            const foundDevices = await Homey.ManagerBLE.discover([], 25*1000);
 
             foundDevices.forEach(device => {
                 //discard all but Ruuvi devices
@@ -49,16 +47,27 @@ function discoverRuuviDevices(driver){
                     || device.manufacturerData.length <= 2
                     || ManufacturerID.compare(device.manufacturerData, 0, 2) != 0)
                     return;
-         
-                devices.push({
+
+                let new_device =
+                {
                     name: device.address,
                     data: {
                         id: device.id,
                         uuid: device.uuid,
                         address: device.address,
-                        dataformat: device.manufacturerData[2] 
-                     }
-                })
+                        dataformat: device.manufacturerData[2]
+                    },
+                    capabilities: [
+                        'measure_battery',
+                        'measure_humidity',
+                        'measure_pressure',
+                        'measure_temperature',
+                        'measure_rssi',
+                        'acceleration'
+                    ],
+                };
+                if (device.manufacturerData[2] == 5) new_device.capabilities.push('alarm_motion');
+                devices.push(new_device);
             });
 
             resolve(devices)

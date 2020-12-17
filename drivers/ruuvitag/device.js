@@ -2,31 +2,15 @@
 
 const Homey = require('homey');
 
-const delay = s => new Promise(resolve => setTimeout(resolve, 1000 * s));
-
-
 class Tag extends Homey.Device {
   /**
    * onInit is called when the device is initialized.
    */
   async onInit() {
       this.log('RuuviTag device has been initialized');
+      this.addListener('updateTag', this.updateTag);
+   }
 
-      this.polling = true;
-      this.addListener('poll', this.pollDevice);
-      // Enable device polling
-      this.emit('poll');
-    
-      //this.updateTag();
-  }
-
-    async pollDevice() {
-        while (this.polling) {
-            console.log(`Updating RuuviTag ${this.getName()}`);
-            this.updateTag();
-            await delay(this.getSetting('polling_interval'));
-        }
-    }
 
   /**
    * onAdded is called when the user adds the device, called just after pairing.
@@ -61,15 +45,14 @@ class Tag extends Homey.Device {
    */
   async onDeleted() {
       this.log('RuuviTag device has been deleted');
-      this.polling = false;
   }
 
-    updateTag() {
-        const timeout = 15000;
+    async updateTag(foundDevices) {
+        console.log(`Updating RuuviTag ${this.getName()}`);
         let deviceData = this.getData();
         let settings = this.getSettings();
 
-        Homey.ManagerBLE.find(deviceData.uuid, timeout)
+        foundDevices.then(devices => devices.find(bleAdv => bleAdv.uuid == deviceData.uuid))
             .then(bleAdv => {
                 this.setCapabilityValue('measure_rssi', bleAdv.rssi);
                 return bleAdv.manufacturerData;
@@ -80,10 +63,24 @@ class Tag extends Homey.Device {
                 this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer));
                 this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer));
                 this.setCapabilityValue('measure_battery', readBattery(deviceData.dataformat, buffer, settings));
+                this.setCapabilityValue('acceleration', computeAcceleration(deviceData.dataformat, buffer));
+
+                if (this.hasCapability('alarm_motion') && settings.motiondetection) {
+                    let last_movement_counter = this.getStoreValue('movement_counter');
+                    let movement_counter = readMovementCounter(deviceData.dataformat, buffer);
+                    this.setStoreValue('movement_counter', movement_counter);
+
+                    if (typeof last_movement_counter == 'number') {
+                        let rate = movement_counter - last_movement_counter;
+                        if (rate < 0) rate += 255;
+                        if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
+                        else this.setCapabilityValue('alarm_motion', false);
+                    }
+                } 
             })
             .catch(error => {
-                console.log(`Error when updating Tag ${this.getName()} with uuid ${deviceData.uuid}`);
-            })
+                console.log(`Error/no data available when updating Tag ${this.getName()} with uuid ${deviceData.uuid}`);
+            });
     }
 }
 
@@ -126,4 +123,34 @@ function readBattery(format, buffer, settings) {
         return (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
     }
     else throw new Error(`Unsupported format detected`);
+}
+
+function readMovementCounter(format, buffer) {
+    if (format == 5) return buffer.readUInt8(17) ;
+    else if (format == 3) console.log('movement unsupported on v3 data format');
+    else throw new Error(`Unsupported format detected`);
+}
+
+function readAccelerationX(format, buffer) {
+    if (format == 5) return buffer.readInt16BE(9);
+    else if (format == 3) return buffer.readUInt16BE(8);
+    else throw new Error(`Unsupported format detected`);
+}
+
+function readAccelerationY(format, buffer) {
+    if (format == 5) return buffer.readInt16BE(11);
+    else if (format == 3) return buffer.readUInt16BE(10);
+    else throw new Error(`Unsupported format detected`);
+}
+
+function readAccelerationZ(format, buffer) {
+    if (format == 5) return buffer.readInt16BE(13);
+    else if (format == 3) return buffer.readUInt16BE(12);
+    else throw new Error(`Unsupported format detected`);
+}
+
+function computeAcceleration(format, buffer) {
+    return Math.sqrt(Math.pow(readAccelerationX(format, buffer), 2) +
+        Math.pow(readAccelerationY(format, buffer), 2)
+        + Math.pow(readAccelerationZ(format, buffer), 2)) / 1000; 
 }

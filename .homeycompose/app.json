@@ -1,13 +1,23 @@
 {
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "compatibility": ">=3.1.0",
   "sdk": 2,
   "name": {
     "en": "RuuviTag"
   },
   "description": {
-    "en": "Adds support for RuuviTag Bluetooth Sensor"
+    "en": "A Complete Environmental Sensor Solution in Your Pocket"
+  },
+  "tags": {
+    "en": [
+      "Ruuvi",
+      "Ruuvitag",
+      "weather",
+      "temperature",
+      "ble",
+      "beacon"
+    ]
   },
   "category": [
     "appliances"
@@ -22,5 +32,16 @@
   "author": {
     "name": "Thomas Houssin",
     "email": "thomas.houssin@gmail.com"
-  }
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "thomas.houssin@gmail.com"
+      }
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag/issues"
+  },
+  "source": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag"
 }

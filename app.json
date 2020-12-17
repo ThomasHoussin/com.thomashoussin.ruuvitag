@@ -1,14 +1,24 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "compatibility": ">=3.1.0",
   "sdk": 2,
   "name": {
     "en": "RuuviTag"
   },
   "description": {
-    "en": "Adds support for RuuviTag Bluetooth Sensor"
+    "en": "A Complete Environmental Sensor Solution in Your Pocket"
+  },
+  "tags": {
+    "en": [
+      "Ruuvi",
+      "Ruuvitag",
+      "weather",
+      "temperature",
+      "ble",
+      "beacon"
+    ]
   },
   "category": [
     "appliances"
@@ -24,6 +34,17 @@
     "name": "Thomas Houssin",
     "email": "thomas.houssin@gmail.com"
   },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "thomas.houssin@gmail.com"
+      }
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag/issues"
+  },
+  "source": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag",
   "drivers": [
     {
       "id": "ruuvitag",
@@ -36,7 +57,8 @@
         "measure_humidity",
         "measure_pressure",
         "measure_temperature",
-        "measure_rssi"
+        "measure_rssi",
+        "acceleration"
       ],
       "images": {
         "large": "/drivers/ruuvitag/assets/images/large.png",
@@ -49,28 +71,54 @@
       },
       "settings": [
         {
-          "id": "batt_mini",
-          "type": "number",
-          "value": 2000,
+          "type": "group",
           "label": {
-            "en": "Minimum value for battery voltage, in mV"
-          }
+            "en": "Battery settings"
+          },
+          "children": [
+            {
+              "id": "batt_mini",
+              "type": "number",
+              "value": 2000,
+              "label": {
+                "en": "Minimum value for battery voltage, in mV"
+              }
+            },
+            {
+              "id": "batt_maxi",
+              "type": "number",
+              "value": 3000,
+              "label": {
+                "en": "Maximum value for battery voltage, in mV"
+              }
+            }
+          ]
         },
         {
-          "id": "batt_maxi",
-          "type": "number",
-          "value": 3000,
+          "type": "group",
           "label": {
-            "en": "Maximum value for battery voltage, in mV"
-          }
-        },
-        {
-          "id": "polling_interval",
-          "type": "number",
-          "value": 300,
-          "label": {
-            "en": "Polling interval for data collection, in seconds"
-          }
+            "en": "Movement settings"
+          },
+          "children": [
+            {
+              "id": "motiondetection",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Enable motion detection"
+              }
+            },
+            {
+              "id": "movement_rate",
+              "type": "number",
+              "value": 1,
+              "min": 1,
+              "max": 254,
+              "label": {
+                "en": "Movement rate to trigger motion alarm (1 : most sensitive)"
+              }
+            }
+          ]
         }
       ],
       "pair": [
@@ -92,6 +140,19 @@
     }
   ],
   "capabilities": {
+    "acceleration": {
+      "type": "number",
+      "title": {
+        "en": "Acceleration"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/acceleration.svg",
+      "units": {
+        "en": "g"
+      },
+      "decimals": 1
+    },
     "measure_rssi": {
       "type": "number",
       "title": {
@@ -99,6 +160,7 @@
       },
       "getable": true,
       "setable": false,
+      "icon": "/assets/rssi.svg",
       "units": {
         "en": "dBm"
       },

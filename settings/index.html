@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+
+    <!-- The '/homey.js' script must be included in your settings view to work -->
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+
+</head>
+<body>
+
+    <h1>RuuviTag App</h1>
+
+    <fieldset>
+        <legend>Settings</legend>
+
+        <div class="field row">
+            <label for="scan">Scan duration (in seconds)</label>
+            <input id="scan" type="number" value=""/>
+        </div>
+        <div class="field row">
+            <label for="poll">Polling interval (in seconds)</label>
+            <input id="poll" type="number" value=""/>
+        </div>
+
+    </fieldset>
+
+    <button id="save" class="right">Save changes</button>
+
+    <script type="text/javascript">
+
+        // a method named 'onHomeyReady' must be present in your code
+        function onHomeyReady( Homey ){
+
+	        // Tell Homey we're ready to be displayed
+            Homey.ready();
+
+            var scanElement = document.getElementById('scan');
+            var pollElement = document.getElementById('poll');
+            var saveElement = document.getElementById('save');
+
+            Homey.get('scan_duration', function( err, scan ) {
+	           if( err ) return Homey.alert( err );
+                scanElement.value = scan ? scan : 20;
+	        });
+
+            Homey.get('polling_interval', function( err, poll ) {
+	           if( err ) return Homey.alert( err );
+                pollElement.value = poll ? poll : 60 ;
+	        });
+
+	        saveElement.addEventListener('click', function(e) {
+
+                if (scanElement.value < 1 || scanElement.value >= 30 || pollElement.value < 10 || pollElement.value > 900) {
+                    scanElement.value = 20; 
+                    pollElement.value = 60;
+                    Homey.alert("scan duration must be between 1 and 30 ; polling interval between 10 and 900");
+                }
+                else {
+                    Homey.set('scan_duration', scanElement.value, function (err) {
+                        if (err) return Homey.alert(err);
+                    });
+                    Homey.set('polling_interval', pollElement.value, function (err) {
+                        if (err) return Homey.alert(err);
+                    });
+
+                    Homey.alert("Settings saved");
+                    Homey.alert(scanNumber);
+                }
+
+	        });
+        }
+    </script>
+
+</body>
+</html>
