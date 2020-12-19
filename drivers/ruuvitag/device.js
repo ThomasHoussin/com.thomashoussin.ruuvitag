@@ -211,19 +211,19 @@ function readMovementCounter(format, buffer) {
 
 function readAccelerationX(format, buffer) {
     if (format == 5) return buffer.readInt16BE(9);
-    else if (format == 3) return buffer.readUInt16BE(8);
+    else if (format == 3) return buffer.readInt16BE(8);
     else throw new Error(`Unsupported format detected`);
 }
 
 function readAccelerationY(format, buffer) {
     if (format == 5) return buffer.readInt16BE(11);
-    else if (format == 3) return buffer.readUInt16BE(10);
+    else if (format == 3) return buffer.readInt16BE(10);
     else throw new Error(`Unsupported format detected`);
 }
 
 function readAccelerationZ(format, buffer) {
     if (format == 5) return buffer.readInt16BE(13);
-    else if (format == 3) return buffer.readUInt16BE(12);
+    else if (format == 3) return buffer.readInt16BE(12);
     else throw new Error(`Unsupported format detected`);
 }
 
