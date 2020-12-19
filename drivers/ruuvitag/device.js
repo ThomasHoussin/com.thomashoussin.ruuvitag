@@ -27,8 +27,9 @@ class Tag extends Homey.Device {
    * @param {string[]} event.changedKeys An array of keys changed since the previous version
    * @returns {Promise<string|void>} return a custom message that will be displayed
    */
-  async onSettings({ oldSettings, newSettings, changedKeys }) {
+  async onSettings(oldSettings, newSettings, changedKeys) {
       this.log('RuuviTag device settings where changed');
+      if (this.getCapabilityValue('onoff')) this.setStoreValue('TTL', newSettings.TTL);
   }
 
   /**
@@ -54,11 +55,23 @@ class Tag extends Homey.Device {
 
         foundDevices.then(devices => devices.find(bleAdv => bleAdv.uuid == deviceData.uuid))
             .then(bleAdv => {
-                this.setCapabilityValue('measure_rssi', bleAdv.rssi);
-                return bleAdv.manufacturerData;
+                if (bleAdv != undefined) {
+                    this.setCapabilityValue('measure_rssi', bleAdv.rssi);
+                    return bleAdv.manufacturerData;
+                }
+                else throw new Error(`No scanned data for device ${this.getName()}`);
             })
-            .then(buffer => validateDataFormat(deviceData.dataformat, buffer))
             .then(buffer => {
+                if (deviceData.dataformat == readFormat(buffer)) return validateDataFormat(deviceData.dataformat, buffer);
+                else {
+                    console.log(`Difference between dataFormat and read data for ${this.getName()} with uuid ${deviceData.uuid}`);
+                    throw new Error(`Unexpected data in buffer : ${buffer}`);
+                }
+            })
+            .then(buffer => {
+                //marking device as present
+                this.setInsideRange();
+
                 this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer));
                 this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer));
                 this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer));
@@ -76,15 +89,80 @@ class Tag extends Homey.Device {
                         if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
                         else this.setCapabilityValue('alarm_motion', false);
                     }
-                } 
+                }
             })
             .catch(error => {
                 console.log(`Error/no data available when updating Tag ${this.getName()} with uuid ${deviceData.uuid}`);
-            });
+                console.log(error);
+                //decreasing TTL
+                let TTL = this.getStoreValue('TTL') - 1; 
+                this.setStoreValue('TTL', TTL);
+                //marking as away if TTL = 0 
+                if(TTL <= 0) this.setOutsideRange();
+            }); 
+    }
+
+    setInsideRange() {
+        this.setStoreValue('TTL', this.getSetting('TTL'));
+
+        //showing token as on
+        if (!this.getCapabilityValue('onoff')) {
+            this.setCapabilityValue('onoff', true);
+
+            //registering notification
+            new Homey.Notification({
+                excerpt: `RuuviTag ${this.getName()} entered range`
+            })
+                .register();
+
+            //launching trigger
+            this.getDriver().RuuviTagEnteredRange.trigger(this, {
+                'name': this.getName(),
+                'uuid': this.getData().uuid
+            })
+                .then(function () {
+                    Homey.app.log('Done trigger flow card ruuvitag_entered_range');
+                })
+                .catch(function (error) {
+                    Homey.app.log('Cannot trigger flow card ruuvitag_entered_range: ' + error);
+                });
+        }
+    }
+
+    setOutsideRange() {
+        this.setStoreValue('TTL', 0);    
+
+        //trigger only if state changed
+        if (this.getCapabilityValue('onoff')) {
+            //showing token as off
+            this.setCapabilityValue('onoff', false);
+
+            //registering notification
+            new Homey.Notification({
+                excerpt: `RuuviTag ${this.getName()} exited range`
+            })
+                .register();
+
+            //launching trigger
+            this.getDriver().RuuviTagExitedRange.trigger(this, {
+                'name': this.getName(),
+                'uuid': this.getData().uuid
+            })
+                .then(function () {
+                    Homey.app.log('Done trigger flow card ruuvitag_exited_range');
+                })
+                .catch(function (error) {
+                    Homey.app.log('Cannot trigger flow card ruuvitag_exited_range: ' + error);
+                });
+        }
     }
 }
 
 module.exports = Tag ;
+
+function readFormat(buffer) {
+    return buffer[2];
+}
 
 function validateDataFormat(format, buffer) {
     if (format == 5 && buffer.length == 26 && buffer[2] == 5) return buffer;

@@ -11,11 +11,12 @@ class MyApp extends Homey.App {
    */
     async onInit() {
         this.log('MyApp has been initialized');
-        this.polling = true;
-        //Homey.ManagerSettings.set('polling_interval', 30);
 
+        //polling BLE
+        this.polling = true;
         this.addListener('poll', this.pollDevice);
-        // Enable device polling
+
+        // Initiating device polling
         this.emit('poll');
     }
 
@@ -24,6 +25,7 @@ class MyApp extends Homey.App {
             console.log(`Refreshing BLE`);
             let polling_interval = Homey.ManagerSettings.get('polling_interval');
             let scan_duration = Homey.ManagerSettings.get('scan_duration');
+            //default value for polling and scan
             if (!polling_interval) polling_interval = 60;
             if (!scan_duration) scan_duration = 20;
 

@@ -10,7 +10,8 @@
     "measure_pressure",
     "measure_temperature",
     "measure_rssi",
-    "acceleration"
+    "acceleration",
+    "onoff"
   ],
   "images": {
     "large": "/drivers/ruuvitag/assets/images/large.png",
@@ -29,7 +30,7 @@
         {
           "id": "batt_mini",
           "type": "number",
-          "value": 2000,
+          "value": 2600,
           "label": {
             "en": "Minimum value for battery voltage, in mV"
           }
@@ -37,7 +38,7 @@
         {
           "id": "batt_maxi",
           "type": "number",
-          "value": 3000,
+          "value": 3400,
           "label": {
             "en": "Maximum value for battery voltage, in mV"
           }
@@ -66,6 +67,24 @@
           "max": 254,
           "label": {
             "en": "Movement rate to trigger motion alarm (1 : most sensitive)"
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "label": {
+        "en": "Presence settings"
+      },
+      "children": [
+        {
+          "id": "TTL",
+          "type": "number",
+          "value": 5,
+          "min": 1,
+          "max": 60,
+          "label": {
+            "en": "Number of attempts before marking as out"
           }
         }
       ]

@@ -1,0 +1,29 @@
+{
+  "id": "ruuvitag_exited_range",
+  "title": {
+    "en": "RuuviTag exited range"
+  },
+  "tokens": [
+    {
+      "name": "name",
+      "type": "string",
+      "title": {
+        "en": "Name"
+      }
+    },
+    {
+      "name": "uuid",
+      "type": "string",
+      "title": {
+        "en": "Ruuvitag uuid"
+      }
+    }
+  ],
+  "args": [
+    {
+      "name": "Tag",
+      "type": "device",
+      "filter": "driver_id=ruuvitag"
+    }
+  ]
+}

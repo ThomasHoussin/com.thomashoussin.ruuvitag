@@ -8,6 +8,13 @@ class RuuviTag extends Homey.Driver {
    */
   async onInit() {
       this.log('RuuviTag driver has been initialized');
+
+      // Registering trigger
+      this.RuuviTagEnteredRange = new Homey.FlowCardTriggerDevice('ruuvitag_entered_range');
+      this.RuuviTagEnteredRange.register();
+
+      this.RuuviTagExitedRange = new Homey.FlowCardTriggerDevice('ruuvitag_exited_range');
+      this.RuuviTagExitedRange.register();
   }
 
   /**
@@ -63,7 +70,8 @@ function discoverRuuviDevices(driver){
                         'measure_pressure',
                         'measure_temperature',
                         'measure_rssi',
-                        'acceleration'
+                        'acceleration',
+                        'onoff'
                     ],
                 };
                 if (device.manufacturerData[2] == 5) new_device.capabilities.push('alarm_motion');

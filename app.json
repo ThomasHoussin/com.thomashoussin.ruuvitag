@@ -45,6 +45,68 @@
     "url": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag/issues"
   },
   "source": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag",
+  "flow": {
+    "triggers": [
+      {
+        "id": "ruuvitag_entered_range",
+        "title": {
+          "en": "RuuviTag entered range"
+        },
+        "tokens": [
+          {
+            "name": "name",
+            "type": "string",
+            "title": {
+              "en": "Name"
+            }
+          },
+          {
+            "name": "uuid",
+            "type": "string",
+            "title": {
+              "en": "Ruuvitag uuid"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "Tag",
+            "type": "device",
+            "filter": "driver_id=ruuvitag"
+          }
+        ]
+      },
+      {
+        "id": "ruuvitag_exited_range",
+        "title": {
+          "en": "RuuviTag exited range"
+        },
+        "tokens": [
+          {
+            "name": "name",
+            "type": "string",
+            "title": {
+              "en": "Name"
+            }
+          },
+          {
+            "name": "uuid",
+            "type": "string",
+            "title": {
+              "en": "Ruuvitag uuid"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "Tag",
+            "type": "device",
+            "filter": "driver_id=ruuvitag"
+          }
+        ]
+      }
+    ]
+  },
   "drivers": [
     {
       "id": "ruuvitag",
@@ -58,7 +120,8 @@
         "measure_pressure",
         "measure_temperature",
         "measure_rssi",
-        "acceleration"
+        "acceleration",
+        "onoff"
       ],
       "images": {
         "large": "/drivers/ruuvitag/assets/images/large.png",
@@ -79,7 +142,7 @@
             {
               "id": "batt_mini",
               "type": "number",
-              "value": 2000,
+              "value": 2600,
               "label": {
                 "en": "Minimum value for battery voltage, in mV"
               }
@@ -87,7 +150,7 @@
             {
               "id": "batt_maxi",
               "type": "number",
-              "value": 3000,
+              "value": 3400,
               "label": {
                 "en": "Maximum value for battery voltage, in mV"
               }
@@ -116,6 +179,24 @@
               "max": 254,
               "label": {
                 "en": "Movement rate to trigger motion alarm (1 : most sensitive)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Presence settings"
+          },
+          "children": [
+            {
+              "id": "TTL",
+              "type": "number",
+              "value": 5,
+              "min": 1,
+              "max": 60,
+              "label": {
+                "en": "Number of attempts before marking as out"
               }
             }
           ]
@@ -165,6 +246,17 @@
         "en": "dBm"
       },
       "decimals": 0
+    },
+    "onoff": {
+      "type": "boolean",
+      "uiComponent": null,
+      "uiQuickAction": true,
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "title": {
+        "en": "Present"
+      }
     }
   }
 }

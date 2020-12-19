@@ -1,0 +1,11 @@
+{
+  "type": "boolean",
+  "uiComponent": null,
+  "uiQuickAction": true,
+  "getable": true,
+  "setable": false,
+  "insights": false,
+  "title": {
+    "en": "Present"
+  }
+}
