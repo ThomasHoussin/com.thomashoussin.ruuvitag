@@ -22,6 +22,8 @@ Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+### v0.0.3
+	- Add triggers when RuuviTag enters/leaves,  fixed bug with acceleratio with RAWv1
 ### v0.0.2
 	- Add app settings, acceleration capability, icons
 ### v0.0.1

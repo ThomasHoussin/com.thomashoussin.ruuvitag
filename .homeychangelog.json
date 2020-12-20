@@ -1,4 +1,7 @@
 {
+  "0.0.3": {
+    "en": "Add triggers when RuuviTag enters/leaves,  fixed bug with acceleratio with RAWv1"
+  },
   "0.0.2": {
     "en": "Add app settings, acceleration capability, icons"
   },

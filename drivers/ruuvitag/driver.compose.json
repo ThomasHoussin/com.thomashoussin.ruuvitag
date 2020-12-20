@@ -30,7 +30,7 @@
         {
           "id": "batt_mini",
           "type": "number",
-          "value": 2600,
+          "value": 2500,
           "label": {
             "en": "Minimum value for battery voltage, in mV"
           }
@@ -38,7 +38,7 @@
         {
           "id": "batt_maxi",
           "type": "number",
-          "value": 3400,
+          "value": 3000,
           "label": {
             "en": "Maximum value for battery voltage, in mV"
           }

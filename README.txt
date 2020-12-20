@@ -11,4 +11,4 @@ This apps allows integration of RuuviTag (RAWv1 and RAWv2 format) in Homey, allo
 - RSSI
 - Movement (RAWv2 only)
 
-More functionalities will be added in next versions (support for Ruuvi Station, presence detection, etc/)
+More functionalities will be added in next versions (support for Ruuvi Station, etc.)
