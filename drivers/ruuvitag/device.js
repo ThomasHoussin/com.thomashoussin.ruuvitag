@@ -195,16 +195,21 @@ function readBattery(format, buffer, settings) {
     //we try to estimate battery life
     //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery 
     //default settings is 2.5V for min value, but it can be adjusted (depending on temperature, etc.)
+    let percent = 0;
 
     if (format == 5) {
         let voltage = (buffer.readUInt16BE(15) >> 5) + 1600;
-        return Math.min(100, (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100);
+        percent = (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
     }
     else if (format == 3) {
         let voltage = buffer.readUInt16BE(14);
-        return Math.min(100, (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100);
+        percent = (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
     }
     else throw new Error(`Unsupported format detected`);
+
+    if (percent > 100) percent = 100;
+    else if (percent < 0) percent = 0;
+    return percent;
 }
 
 function readMovementCounter(format, buffer) {
