@@ -186,8 +186,8 @@ function readHumidity(format, buffer) {
 }
 
 function readPressure(format, buffer) {
-    if (format == 5) return buffer.readUInt16BE(7) + 50000;
-    else if (format == 3) return buffer.readUInt16BE(6) + 50000;
+    if (format == 5) return buffer.readUInt16BE(7) / 100 + 500;
+    else if (format == 3) return buffer.readUInt16BE(6) / 100 + 500;
     else throw new Error(`Unsupported format detected`);
 }
 
