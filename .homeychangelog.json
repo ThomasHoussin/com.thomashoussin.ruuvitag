@@ -7,5 +7,8 @@
   },
   "0.0.1": {
     "en": "Initial version"
+  },
+  "0.0.4": {
+    "en": "Fixed pressure unit, updated trigger title"
   }
 }
