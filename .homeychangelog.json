@@ -10,5 +10,8 @@
   },
   "0.0.4": {
     "en": "Fixed pressure unit, updated trigger title"
+  },
+  "0.0.5": {
+    "en": "Add API for Ruuvi Station gateway"
   }
 }

@@ -9,6 +9,7 @@ class Tag extends Homey.Device {
   async onInit() {
       this.log('RuuviTag device has been initialized');
       this.addListener('updateTag', this.updateTag);
+      this.addListener('updateTagFromGateway', this.updateTagFromGateway);
    }
 
 
@@ -75,8 +76,8 @@ class Tag extends Homey.Device {
                 this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer));
                 this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer));
                 this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer));
-                this.setCapabilityValue('measure_battery', readBattery(deviceData.dataformat, buffer, settings));
-                this.setCapabilityValue('acceleration', computeAcceleration(deviceData.dataformat, buffer));
+                this.setCapabilityValue('measure_battery', estimateBattery(readBattery(deviceData.dataformat, buffer), settings));
+                this.setCapabilityValue('acceleration', computeAcceleration(readAccelerationX(deviceData.dataformat, buffer), readAccelerationY(deviceData.dataformat, buffer), readAccelerationZ(deviceData.dataformat, buffer)) / 1000 );
 
                 if (this.hasCapability('alarm_motion') && settings.motiondetection) {
                     let last_movement_counter = this.getStoreValue('movement_counter');
@@ -156,6 +157,30 @@ class Tag extends Homey.Device {
                 });
         }
     }
+
+    async updateTagFromGateway(tag) {
+        let settings = this.getSettings();
+
+        this.setCapabilityValue('measure_rssi', tag.rssi);
+        this.setCapabilityValue('measure_temperature', tag.temperature);
+        this.setCapabilityValue('measure_pressure', tag.pressure / 100);
+        this.setCapabilityValue('measure_humidity', tag.humidity);
+        this.setCapabilityValue('measure_battery', estimateBattery(tag.voltage * 1000, settings ));
+        this.setCapabilityValue('acceleration', computeAcceleration(tag.accelX, tag.accelY, tag.accelZ));
+
+        if (this.hasCapability('alarm_motion') && settings.motiondetection) {
+            let last_movement_counter = this.getStoreValue('movement_counter');
+            let movement_counter = tag.movementCounter ;
+            this.setStoreValue('movement_counter', movement_counter);
+
+            if (typeof last_movement_counter == 'number') {
+                let rate = movement_counter - last_movement_counter;
+                if (rate < 0) rate += 255;
+                if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
+                else this.setCapabilityValue('alarm_motion', false);
+            }
+        }
+    }
 }
 
 module.exports = Tag ;
@@ -191,24 +216,26 @@ function readPressure(format, buffer) {
     else throw new Error(`Unsupported format detected`);
 }
 
-function readBattery(format, buffer, settings) {
+function readBattery(format, buffer) {
+    if (format == 5) {
+        return (buffer.readUInt16BE(15) >> 5) + 1600;
+    }
+    else if (format == 3) {
+        return buffer.readUInt16BE(14);
+    }
+    else throw new Error(`Unsupported format detected`);
+}
+
+function estimateBattery(voltage, settings) {
     //we try to estimate battery life
     //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery 
     //default settings is 2.5V for min value, but it can be adjusted (depending on temperature, etc.)
-    let percent = 0;
 
-    if (format == 5) {
-        let voltage = (buffer.readUInt16BE(15) >> 5) + 1600;
-        percent = (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
-    }
-    else if (format == 3) {
-        let voltage = buffer.readUInt16BE(14);
-        percent = (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
-    }
-    else throw new Error(`Unsupported format detected`);
+    let percent = (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
 
     if (percent > 100) percent = 100;
     else if (percent < 0) percent = 0;
+
     return percent;
 }
 
@@ -236,8 +263,8 @@ function readAccelerationZ(format, buffer) {
     else throw new Error(`Unsupported format detected`);
 }
 
-function computeAcceleration(format, buffer) {
-    return Math.sqrt(Math.pow(readAccelerationX(format, buffer), 2) +
-        Math.pow(readAccelerationY(format, buffer), 2)
-        + Math.pow(readAccelerationZ(format, buffer), 2)) / 1000; 
+function computeAcceleration(accelerationX, accelerationY, accelerationZ) {
+    return Math.sqrt(Math.pow(accelerationX, 2) +
+        Math.pow(accelerationY, 2)
+        + Math.pow(accelerationZ, 2)) ; 
 }
