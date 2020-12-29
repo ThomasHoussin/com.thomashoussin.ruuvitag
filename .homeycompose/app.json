@@ -1,6 +1,6 @@
 {
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "compatibility": ">=3.1.0",
   "sdk": 2,
   "name": {
@@ -16,7 +16,8 @@
       "weather",
       "temperature",
       "ble",
-      "beacon"
+      "beacon",
+      "ruuvi gateway"
     ]
   },
   "category": [
@@ -43,5 +44,6 @@
   "bugs": {
     "url": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag/issues"
   },
-  "source": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag"
+  "source": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag",
+  "homeyCommunityTopicId": 39495
 }

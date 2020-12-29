@@ -15,13 +15,22 @@ This apps allows integration of RuuviTag (RAWv1 and RAWv2 format) in Homey, allo
 - RSSI
 - Movement (RAWv2 only)
 
-More functionalities will be added in next versions (support for Ruuvi Station, presence detection, etc/)
+## Ruuvi gateway
+The app also allows Homey to act as a Ruuvi Station gateway. 
+
+You have to allow public access in the app settings (default is private) ; then in Ruuvi Station, in gateway settings, use : 
+- http://<your_ip>/api/app/com.thomashoussin.ruuvitag for local access only
+- https://<cloudId>.connect.athom.com/api/app/com.thomashoussin.ruuvitag (cloudId can be found on http://developer.athom.com/tools/system)
+
+Device must have been locally added in Homey ; after that, data received through update Ruuvitag device (if device is unknown, data is discarded). Presence is not modified when receiving data through gateway. 
 
 ## Donations
 Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+### v0.0.6
+	- Add preference to show / hide notification messages
 ### v0.0.5 
 	- Add API for Ruuvi Station gateway
 ### v0.0.4

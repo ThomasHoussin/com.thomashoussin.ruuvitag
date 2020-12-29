@@ -86,6 +86,14 @@
           "label": {
             "en": "Number of attempts before marking as out"
           }
+        },
+        {
+          "id": "enable_notif",
+          "type": "checkbox",
+          "value": true,
+          "label": {
+            "en": "Show notifications when entering/leaving range"
+          }
         }
       ]
     }

@@ -110,11 +110,13 @@ class Tag extends Homey.Device {
         if (!this.getCapabilityValue('onoff')) {
             this.setCapabilityValue('onoff', true);
 
-            //registering notification
-            new Homey.Notification({
-                excerpt: `RuuviTag ${this.getName()} entered range`
-            })
-                .register();
+            //registering notification if enabled
+            if (this.getSetting('enable_notif')) {
+                new Homey.Notification({
+                    excerpt: `RuuviTag ${this.getName()} entered range`
+                })
+                    .register();
+            }
 
             //launching trigger
             this.getDriver().RuuviTagEnteredRange.trigger(this, {
@@ -138,11 +140,13 @@ class Tag extends Homey.Device {
             //showing token as off
             this.setCapabilityValue('onoff', false);
 
-            //registering notification
-            new Homey.Notification({
-                excerpt: `RuuviTag ${this.getName()} exited range`
-            })
-                .register();
+            //registering notification if enabled
+            if (this.getSetting('enable_notif')) {
+                new Homey.Notification({
+                    excerpt: `RuuviTag ${this.getName()} exited range`
+                })
+                    .register();
+            }
 
             //launching trigger
             this.getDriver().RuuviTagExitedRange.trigger(this, {

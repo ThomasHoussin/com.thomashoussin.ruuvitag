@@ -13,5 +13,8 @@
   },
   "0.0.5": {
     "en": "Add API for Ruuvi Station gateway"
+  },
+  "0.0.6": {
+    "en": "Add preference to show / hide notification messages"
   }
 }
