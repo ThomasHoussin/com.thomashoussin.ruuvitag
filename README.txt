@@ -10,8 +10,12 @@ This apps allows integration of RuuviTag (RAWv1 and RAWv2 format) in Homey, allo
 - Battery
 - RSSI
 - Movement (RAWv2 only)
+- Entering/leaving range : it can be used as a BLE beacon, triggering an event when the device enters or leaves the range. The number of attempts scan can be configured per device in device settings.
 
-The app allows Homey to act as a Ruuvi Station gateway. 
+Scan duration (how long homey listens for BLE advertisment) and polling interval (how long between two scans) can be configured in app settings.
+
+
+The app also allows Homey to act as a Ruuvi Station gateway. 
 
 You have to allow public access in the app settings (default is private) ; then in Ruuvi Station, in gateway settings, use : 
 - http://<your_ip>/api/app/com.thomashoussin.ruuvitag for local access only
