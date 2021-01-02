@@ -8,6 +8,25 @@ class Tag extends Homey.Device {
    */
   async onInit() {
       this.log('RuuviTag device has been initialized');
+      //v0.1.0 introduced alarm_battery capability
+      //we check if this capability is supported and add it if necessary
+      if (this.getData().dataformat == 5 && !this.hasCapability('alarm_battery')) {
+          console.log(`Adding capability alarm_battery to Ruuvitag ${this.getName()}`);
+          this.addCapability('alarm_battery');
+      }
+
+      if (this.getData().dataformat == 5 && !this.hasCapability('button.resetbattery')) {
+          console.log(`Adding capability button.resetbattery to Ruuvitag ${this.getName()}`);
+          this.addCapability('button.resetbattery');
+      }
+
+      if (this.getData().dataformat == 5) {
+          this.registerCapabilityListener('button.resetbattery', async () => {
+              this.setCapabilityValue('alarm_battery', false);
+              return;
+          });
+      }
+
       this.addListener('updateTag', this.updateTag);
       this.addListener('updateTagFromGateway', this.updateTagFromGateway);
    }
@@ -91,6 +110,32 @@ class Tag extends Homey.Device {
                         else this.setCapabilityValue('alarm_motion', false);
                     }
                 }
+
+                //we try to detect a reset in sequence number
+                if (deviceData.dataformat == 5) {
+                    let sequenceNumber = this.getStoreValue('sequence_counter');
+                    let newSequenceNumber = readSequenceNumber(deviceData.dataformat, buffer);
+                    this.setStoreValue('sequence_counter', newSequenceNumber);
+
+                    if (newSequenceNumber < sequenceNumber) {
+                        //reset in sequence number. Is this expected ?
+
+                        //we use elasped time to make a rough guess 
+                        let elapsed = Date.now() - this.getStoreValue('last_measure');
+                        let inc = (elapsed * 1.2) / 1285 ; 
+                        if (sequenceNumber + inc < 65535) {
+                            //reset is probably an anomaly
+                            //probably low bat warning
+                            //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery for more informations
+                            console.log(`RuuviTag ${this.getName()} reset in sequence number`);
+                            this.setCapabilityValue('alarm_battery', true);
+                        }
+                    }
+                }
+
+                //saving timestamp of measure
+                this.setStoreValue('last_measure', Date.now());
+
             })
             .catch(error => {
                 console.log(`Error/no data available when updating Tag ${this.getName()} with uuid ${deviceData.uuid}`);
@@ -245,7 +290,7 @@ function estimateBattery(voltage, settings) {
 
 function readMovementCounter(format, buffer) {
     if (format == 5) return buffer.readUInt8(17) ;
-    else if (format == 3) console.log('movement unsupported on v3 data format');
+    else if (format == 3) throw new Error('movement unsupported on v3 data format');
     else throw new Error(`Unsupported format detected`);
 }
 
@@ -264,6 +309,12 @@ function readAccelerationY(format, buffer) {
 function readAccelerationZ(format, buffer) {
     if (format == 5) return buffer.readInt16BE(13);
     else if (format == 3) return buffer.readInt16BE(12);
+    else throw new Error(`Unsupported format detected`);
+}
+
+function readSequenceNumber(format, buffer) {
+    if (format == 5) return buffer.readUInt16BE(18);
+    else if (format == 3) throw new Error(`Sequence number unsupported on v3 data format`);
     else throw new Error(`Unsupported format detected`);
 }
 

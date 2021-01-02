@@ -71,7 +71,9 @@ function discoverRuuviDevices(driver){
                         'measure_temperature',
                         'measure_rssi',
                         'acceleration',
-                        'onoff'
+                        'onoff',
+                        'alarm_battery',
+                        'button.resetbattery'
                     ],
                 };
                 if (device.manufacturerData[2] == 5) new_device.capabilities.push('alarm_motion');

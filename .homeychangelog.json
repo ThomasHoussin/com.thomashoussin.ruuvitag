@@ -16,5 +16,8 @@
   },
   "0.0.6": {
     "en": "Add preference to show / hide notification messages"
+  },
+  "0.1.0": {
+    "en": "Add reset in sequence number detection : low bat warning"
   }
 }
