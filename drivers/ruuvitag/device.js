@@ -112,24 +112,27 @@ class Tag extends Homey.Device {
                 }
 
                 //we try to detect a reset in sequence number
-                if (deviceData.dataformat == 5) {
+                if (this.hasCapability('alarm_battery')) {
                     let sequenceNumber = this.getStoreValue('sequence_counter');
                     let newSequenceNumber = readSequenceNumber(deviceData.dataformat, buffer);
                     this.setStoreValue('sequence_counter', newSequenceNumber);
 
-                    if (newSequenceNumber < sequenceNumber) {
-                        //reset in sequence number. Is this expected ?
+                    let elapsed = Date.now() - this.getStoreValue('last_measure');
+                    let inc = (elapsed * 1.2) / 1285; 
 
-                        //we use elasped time to make a rough guess 
-                        let elapsed = Date.now() - this.getStoreValue('last_measure');
-                        let inc = (elapsed * 1.2) / 1285 ; 
-                        if (sequenceNumber + inc < 65535) {
-                            //reset is probably an anomaly
-                            //probably low bat warning
-                            //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery for more informations
-                            console.log(`RuuviTag ${this.getName()} reset in sequence number`);
-                            this.setCapabilityValue('alarm_battery', true);
-                        }
+                    if (newSequenceNumber < sequenceNumber
+                        //reset in sequence number. Is this expected ?
+                        && sequenceNumber + inc < 65535) {
+                        //we use elapsed time to make a rough guess 
+
+                        //reset is probably an anomaly
+                        //probably low bat warning
+                        //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery for more informations
+                        console.log(`RuuviTag ${this.getName()} reset in sequence number`);
+                        this.setCapabilityValue('alarm_battery', true);
+                    }
+                    else {
+                        this.setCapabilityValue('alarm_battery', false);
                     }
                 }
 

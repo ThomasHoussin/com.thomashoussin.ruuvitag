@@ -25,7 +25,7 @@ You have to allow public access in the app settings (default is private) ; then 
 - http://<your_ip>/api/app/com.thomashoussin.ruuvitag for local access only
 - https://<cloudId>.connect.athom.com/api/app/com.thomashoussin.ruuvitag (cloudId can be found on http://developer.athom.com/tools/system)
 
-Device must have been locally added in Homey ; after that, data received through update Ruuvitag device (if device is unknown, data is discarded). Presence is not modified when receiving data through gateway. 
+Device must have been locally added in Homey ; after that, data received through API updates Ruuvitag device (if device is unknown, data is discarded). Presence is not modified when receiving data through gateway. 
 
 ## Donations
 Feel free to donate to  support the project !

@@ -71,12 +71,14 @@ function discoverRuuviDevices(driver){
                         'measure_temperature',
                         'measure_rssi',
                         'acceleration',
-                        'onoff',
-                        'alarm_battery',
-                        'button.resetbattery'
+                        'onoff'
                     ],
                 };
-                if (device.manufacturerData[2] == 5) new_device.capabilities.push('alarm_motion');
+                if (device.manufacturerData[2] == 5) {
+                    new_device.capabilities.push('alarm_motion');
+                    new_device.capabilities.push('alarm_battery');
+                    new_device.capabilities.push('button.resetbattery');
+                }
                 devices.push(new_device);
             });
 
