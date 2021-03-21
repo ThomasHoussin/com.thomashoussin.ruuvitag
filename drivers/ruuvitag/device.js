@@ -131,9 +131,6 @@ class Tag extends Homey.Device {
                         console.log(`RuuviTag ${this.getName()} reset in sequence number`);
                         this.setCapabilityValue('alarm_battery', true);
                     }
-                    else {
-                        this.setCapabilityValue('alarm_battery', false);
-                    }
                 }
 
                 //saving timestamp of measure
