@@ -11,8 +11,21 @@
     "measure_temperature",
     "measure_rssi",
     "acceleration",
-    "onoff"
+    "onoff",
+    "alarm_battery",
+    "button.resetbattery"
   ],
+  "capabilitiesOptions": {
+    "button.resetbattery": {
+      "maintenanceAction": true,
+      "title": {
+        "en": "Reset alarm battery"
+      },
+      "desc": {
+        "en": "This will reset alarm battery"
+      }
+    }
+  },
   "images": {
     "large": "/drivers/ruuvitag/assets/images/large.png",
     "small": "/drivers/ruuvitag/assets/images/small.png"
@@ -85,6 +98,14 @@
           "max": 60,
           "label": {
             "en": "Number of attempts before marking as out"
+          }
+        },
+        {
+          "id": "enable_notif",
+          "type": "checkbox",
+          "value": true,
+          "label": {
+            "en": "Show notifications when entering/leaving range"
           }
         }
       ]

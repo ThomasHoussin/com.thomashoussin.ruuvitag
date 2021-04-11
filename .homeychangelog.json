@@ -10,5 +10,17 @@
   },
   "0.0.4": {
     "en": "Fixed pressure unit, updated trigger title"
+  },
+  "0.0.5": {
+    "en": "Add API for Ruuvi Station gateway"
+  },
+  "0.0.6": {
+    "en": "Add preference to show / hide notification messages"
+  },
+  "0.1.0": {
+    "en": "Add reset in sequence number detection : low bat warning"
+  },
+  "0.1.1": {
+    "en": "Bug fix, updated y18n"
   }
 }

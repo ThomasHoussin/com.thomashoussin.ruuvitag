@@ -8,7 +8,27 @@ class Tag extends Homey.Device {
    */
   async onInit() {
       this.log('RuuviTag device has been initialized');
+      //v0.1.0 introduced alarm_battery capability
+      //we check if this capability is supported and add it if necessary
+      if (this.getData().dataformat == 5 && !this.hasCapability('alarm_battery')) {
+          console.log(`Adding capability alarm_battery to Ruuvitag ${this.getName()}`);
+          this.addCapability('alarm_battery');
+      }
+
+      if (this.getData().dataformat == 5 && !this.hasCapability('button.resetbattery')) {
+          console.log(`Adding capability button.resetbattery to Ruuvitag ${this.getName()}`);
+          this.addCapability('button.resetbattery');
+      }
+
+      if (this.getData().dataformat == 5) {
+          this.registerCapabilityListener('button.resetbattery', async () => {
+              this.setCapabilityValue('alarm_battery', false);
+              return;
+          });
+      }
+
       this.addListener('updateTag', this.updateTag);
+      this.addListener('updateTagFromGateway', this.updateTagFromGateway);
    }
 
 
@@ -75,8 +95,8 @@ class Tag extends Homey.Device {
                 this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer));
                 this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer));
                 this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer));
-                this.setCapabilityValue('measure_battery', readBattery(deviceData.dataformat, buffer, settings));
-                this.setCapabilityValue('acceleration', computeAcceleration(deviceData.dataformat, buffer));
+                this.setCapabilityValue('measure_battery', estimateBattery(readBattery(deviceData.dataformat, buffer), settings));
+                this.setCapabilityValue('acceleration', computeAcceleration(readAccelerationX(deviceData.dataformat, buffer), readAccelerationY(deviceData.dataformat, buffer), readAccelerationZ(deviceData.dataformat, buffer)) / 1000 );
 
                 if (this.hasCapability('alarm_motion') && settings.motiondetection) {
                     let last_movement_counter = this.getStoreValue('movement_counter');
@@ -90,6 +110,32 @@ class Tag extends Homey.Device {
                         else this.setCapabilityValue('alarm_motion', false);
                     }
                 }
+
+                //we try to detect a reset in sequence number
+                if (this.hasCapability('alarm_battery')) {
+                    let sequenceNumber = this.getStoreValue('sequence_counter');
+                    let newSequenceNumber = readSequenceNumber(deviceData.dataformat, buffer);
+                    this.setStoreValue('sequence_counter', newSequenceNumber);
+
+                    let elapsed = Date.now() - this.getStoreValue('last_measure');
+                    let inc = (elapsed * 1.2) / 1285; 
+
+                    if (newSequenceNumber < sequenceNumber
+                        //reset in sequence number. Is this expected ?
+                        && sequenceNumber + inc < 65535) {
+                        //we use elapsed time to make a rough guess 
+
+                        //reset is probably an anomaly
+                        //probably low bat warning
+                        //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery for more informations
+                        console.log(`RuuviTag ${this.getName()} reset in sequence number`);
+                        this.setCapabilityValue('alarm_battery', true);
+                    }
+                }
+
+                //saving timestamp of measure
+                this.setStoreValue('last_measure', Date.now());
+
             })
             .catch(error => {
                 console.log(`Error/no data available when updating Tag ${this.getName()} with uuid ${deviceData.uuid}`);
@@ -109,11 +155,13 @@ class Tag extends Homey.Device {
         if (!this.getCapabilityValue('onoff')) {
             this.setCapabilityValue('onoff', true);
 
-            //registering notification
-            new Homey.Notification({
-                excerpt: `RuuviTag ${this.getName()} entered range`
-            })
-                .register();
+            //registering notification if enabled
+            if (this.getSetting('enable_notif')) {
+                new Homey.Notification({
+                    excerpt: `RuuviTag ${this.getName()} entered range`
+                })
+                    .register();
+            }
 
             //launching trigger
             this.getDriver().RuuviTagEnteredRange.trigger(this, {
@@ -137,11 +185,13 @@ class Tag extends Homey.Device {
             //showing token as off
             this.setCapabilityValue('onoff', false);
 
-            //registering notification
-            new Homey.Notification({
-                excerpt: `RuuviTag ${this.getName()} exited range`
-            })
-                .register();
+            //registering notification if enabled
+            if (this.getSetting('enable_notif')) {
+                new Homey.Notification({
+                    excerpt: `RuuviTag ${this.getName()} exited range`
+                })
+                    .register();
+            }
 
             //launching trigger
             this.getDriver().RuuviTagExitedRange.trigger(this, {
@@ -154,6 +204,30 @@ class Tag extends Homey.Device {
                 .catch(function (error) {
                     Homey.app.log('Cannot trigger flow card ruuvitag_exited_range: ' + error);
                 });
+        }
+    }
+
+    async updateTagFromGateway(tag) {
+        let settings = this.getSettings();
+
+        this.setCapabilityValue('measure_rssi', tag.rssi);
+        this.setCapabilityValue('measure_temperature', tag.temperature);
+        this.setCapabilityValue('measure_pressure', tag.pressure / 100);
+        this.setCapabilityValue('measure_humidity', tag.humidity);
+        this.setCapabilityValue('measure_battery', estimateBattery(tag.voltage * 1000, settings ));
+        this.setCapabilityValue('acceleration', computeAcceleration(tag.accelX, tag.accelY, tag.accelZ));
+
+        if (this.hasCapability('alarm_motion') && settings.motiondetection) {
+            let last_movement_counter = this.getStoreValue('movement_counter');
+            let movement_counter = tag.movementCounter ;
+            this.setStoreValue('movement_counter', movement_counter);
+
+            if (typeof last_movement_counter == 'number') {
+                let rate = movement_counter - last_movement_counter;
+                if (rate < 0) rate += 255;
+                if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
+                else this.setCapabilityValue('alarm_motion', false);
+            }
         }
     }
 }
@@ -191,30 +265,32 @@ function readPressure(format, buffer) {
     else throw new Error(`Unsupported format detected`);
 }
 
-function readBattery(format, buffer, settings) {
+function readBattery(format, buffer) {
+    if (format == 5) {
+        return (buffer.readUInt16BE(15) >> 5) + 1600;
+    }
+    else if (format == 3) {
+        return buffer.readUInt16BE(14);
+    }
+    else throw new Error(`Unsupported format detected`);
+}
+
+function estimateBattery(voltage, settings) {
     //we try to estimate battery life
     //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery 
     //default settings is 2.5V for min value, but it can be adjusted (depending on temperature, etc.)
-    let percent = 0;
 
-    if (format == 5) {
-        let voltage = (buffer.readUInt16BE(15) >> 5) + 1600;
-        percent = (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
-    }
-    else if (format == 3) {
-        let voltage = buffer.readUInt16BE(14);
-        percent = (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
-    }
-    else throw new Error(`Unsupported format detected`);
+    let percent = (voltage - settings.batt_mini) / (settings.batt_maxi - settings.batt_mini) * 100;
 
     if (percent > 100) percent = 100;
     else if (percent < 0) percent = 0;
+
     return percent;
 }
 
 function readMovementCounter(format, buffer) {
     if (format == 5) return buffer.readUInt8(17) ;
-    else if (format == 3) console.log('movement unsupported on v3 data format');
+    else if (format == 3) throw new Error('movement unsupported on v3 data format');
     else throw new Error(`Unsupported format detected`);
 }
 
@@ -236,8 +312,14 @@ function readAccelerationZ(format, buffer) {
     else throw new Error(`Unsupported format detected`);
 }
 
-function computeAcceleration(format, buffer) {
-    return Math.sqrt(Math.pow(readAccelerationX(format, buffer), 2) +
-        Math.pow(readAccelerationY(format, buffer), 2)
-        + Math.pow(readAccelerationZ(format, buffer), 2)) / 1000; 
+function readSequenceNumber(format, buffer) {
+    if (format == 5) return buffer.readUInt16BE(18);
+    else if (format == 3) throw new Error(`Sequence number unsupported on v3 data format`);
+    else throw new Error(`Unsupported format detected`);
+}
+
+function computeAcceleration(accelerationX, accelerationY, accelerationZ) {
+    return Math.sqrt(Math.pow(accelerationX, 2) +
+        Math.pow(accelerationY, 2)
+        + Math.pow(accelerationZ, 2)) ; 
 }
