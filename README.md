@@ -32,6 +32,8 @@ Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+### v0.1.1
+	- Bug fix, updated y18n
 ### v0.1.0
 	- Add reset in sequence number detection : low bat warning. This adds alarm_battery capability for Ruuvitag in RAWv2 format and a maintenance action to reset alarm
 ### v0.0.6

@@ -19,5 +19,8 @@
   },
   "0.1.0": {
     "en": "Add reset in sequence number detection : low bat warning"
+  },
+  "0.1.1": {
+    "en": "Bug fix, updated y18n"
   }
 }
