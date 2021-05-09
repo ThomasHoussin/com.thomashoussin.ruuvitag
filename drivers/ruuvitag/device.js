@@ -47,7 +47,7 @@ class Tag extends Homey.Device {
    * @param {string[]} event.changedKeys An array of keys changed since the previous version
    * @returns {Promise<string|void>} return a custom message that will be displayed
    */
-  async onSettings(oldSettings, newSettings, changedKeys) {
+    async onSettings({ oldSettings, newSettings, changedKeys }) {
       this.log('RuuviTag device settings where changed');
       if (this.getCapabilityValue('onoff')) this.setStoreValue('TTL', newSettings.TTL);
   }
@@ -157,22 +157,21 @@ class Tag extends Homey.Device {
 
             //registering notification if enabled
             if (this.getSetting('enable_notif')) {
-                new Homey.Notification({
+                this.homey.notifications.createNotification({
                     excerpt: `RuuviTag ${this.getName()} entered range`
-                })
-                    .register();
+                }) ;
             }
 
             //launching trigger
-            this.getDriver().RuuviTagEnteredRange.trigger(this, {
+            this.driver.RuuviTagEnteredRange.trigger(this, {
                 'name': this.getName(),
                 'uuid': this.getData().uuid
             })
                 .then(function () {
-                    Homey.app.log('Done trigger flow card ruuvitag_entered_range');
+                    console.log('Done trigger flow card ruuvitag_entered_range');
                 })
                 .catch(function (error) {
-                    Homey.app.log('Cannot trigger flow card ruuvitag_entered_range: ' + error);
+                    console.log('Cannot trigger flow card ruuvitag_entered_range: ' + error);
                 });
         }
     }
@@ -187,22 +186,21 @@ class Tag extends Homey.Device {
 
             //registering notification if enabled
             if (this.getSetting('enable_notif')) {
-                new Homey.Notification({
+                this.homey.notifications.createNotification({
                     excerpt: `RuuviTag ${this.getName()} exited range`
-                })
-                    .register();
+                });
             }
 
             //launching trigger
-            this.getDriver().RuuviTagExitedRange.trigger(this, {
+            this.driver.RuuviTagExitedRange.trigger(this, {
                 'name': this.getName(),
                 'uuid': this.getData().uuid
             })
                 .then(function () {
-                    Homey.app.log('Done trigger flow card ruuvitag_exited_range');
+                    console.log('Done trigger flow card ruuvitag_exited_range');
                 })
                 .catch(function (error) {
-                    Homey.app.log('Cannot trigger flow card ruuvitag_exited_range: ' + error);
+                    console.log('Cannot trigger flow card ruuvitag_exited_range: ' + error);
                 });
         }
     }
