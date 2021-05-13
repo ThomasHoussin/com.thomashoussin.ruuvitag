@@ -31,7 +31,7 @@
     "updateData": {
       "method": "post",
       "path": "/",
-      "public": false
+      "public": true
     }
   },
   "images": {
