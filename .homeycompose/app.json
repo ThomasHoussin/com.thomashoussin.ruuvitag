@@ -1,14 +1,15 @@
 {
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.1.1",
-  "compatibility": ">=3.1.0",
-  "sdk": 2,
+  "version": "0.2.0",
+  "compatibility": ">=6.0.0",
+  "sdk": 3,
   "name": {
     "en": "RuuviTag"
   },
   "description": {
     "en": "A Complete Environmental Sensor Solution in Your Pocket"
   },
+  "brandColor": "#62C9BA",
   "tags": {
     "en": [
       "Ruuvi",
@@ -26,6 +27,13 @@
   "permissions": [
     "homey:wireless:ble"
   ],
+  "api": {
+    "updateData": {
+      "method": "post",
+      "path": "/",
+      "public": true
+    }
+  },
   "images": {
     "large": "/assets/images/large.png",
     "small": "/assets/images/small.png"

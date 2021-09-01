@@ -20,10 +20,12 @@ Scan duration (how long homey listens for BLE advertisment) and polling interval
 
 ## Ruuvi gateway
 The app also allows Homey to act as a Ruuvi Station gateway. 
+- Before v0.2 : You have to allow public access in the app settings (default is private) ; 
+- In v0.2 : gateway is public by default ; due to changes in SDKv3, access is public and cannot be changed. 
 
-You have to allow public access in the app settings (default is private) ; then in Ruuvi Station, in gateway settings, use : 
+Then in Ruuvi Station, in gateway settings, use : 
 - http://<your_ip>/api/app/com.thomashoussin.ruuvitag for local access only
-- https://<cloudId>.connect.athom.com/api/app/com.thomashoussin.ruuvitag (cloudId can be found on http://developer.athom.com/tools/system)
+- https://<cloudid>.connect.athom.com/api/app/com.thomashoussin.ruuvitag (cloudId can be found on http://developer.athom.com/tools/system)
 
 Device must have been locally added in Homey ; after that, data received through API updates Ruuvitag device (if device is unknown, data is discarded). Presence is not modified when receiving data through gateway. 
 
@@ -32,6 +34,8 @@ Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+### v0.2
+	- Update to SDKv3. 
 ### v0.1.1
 	- Bug fix, updated y18n
 ### v0.1.0

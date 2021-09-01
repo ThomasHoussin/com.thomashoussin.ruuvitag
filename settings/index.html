@@ -21,11 +21,6 @@
             <label for="poll">Polling interval (in seconds)</label>
             <input id="poll" type="number" value="" />
         </div>
-        <div>
-            <label for="publicAPI">Allow public access to Ruuvi gateway (you have to restart the app for this to take effect)</label>
-            <input id="publicAPI" type="checkbox" value="" />
-        </div>
-
     </fieldset>
 
     <button id="save" class="right">Save changes</button>
@@ -40,7 +35,6 @@
 
             var scanElement = document.getElementById('scan');
             var pollElement = document.getElementById('poll');
-            var publicAPIElement = document.getElementById('publicAPI');
             var saveElement = document.getElementById('save');
 
             Homey.get('scan_duration', function( err, scan ) {
@@ -51,11 +45,6 @@
             Homey.get('polling_interval', function( err, poll ) {
 	           if( err ) return Homey.alert( err );
                 pollElement.value = poll ? poll : 60 ;
-            });
-
-            Homey.get('publicAPI', function (err, public) {
-                if (err) return Homey.alert(err);
-                publicAPIElement.checked = public ? public : false;
             });
 
 	        saveElement.addEventListener('click', function(e) {
@@ -72,10 +61,6 @@
                     Homey.set('polling_interval', pollElement.value, function (err) {
                         if (err) return Homey.alert(err);
                     });
-                    Homey.set('publicAPI', publicAPIElement.checked, function (err) {
-                        if (err) return Homey.alert(err);
-                    });
-
                     Homey.alert("Settings saved");
                 }
 	        });
