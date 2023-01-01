@@ -81,16 +81,17 @@ class RuuviTag extends Homey.Driver {
             if (!polling_interval) polling_interval = 60;
             if (!scan_duration) scan_duration = 20;
 
-            //listing all all Ruuvitag
-            let devices = this.getDevices();
+            //listing all Ruuvitag
+            let ruuvitags = this.getDevices();
 
-            //clear BLE cache for Ruuvitag devices
-            //not needed anymore in Homey v6
-            //devices.forEach(device => delete Homey.ManagerBLE.__advertisementsByPeripheralUUID[device.getData().uuid]);
-
-            //sending update message to all Ruuvitag
+            //scanning BLE devices
             let foundDevices = this.homey.ble.discover([], scan_duration * 1000);
-            devices.forEach(device => device.emit('updateTag', foundDevices));
+
+            //sending bleAdv to ruuviTag
+            for (const ruuvitag of ruuvitags) {
+                let ruuvitagData = ruuvitag.getData() ;
+                ruuvitag.emit('updateTag', foundDevices.then(devices => devices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid)));
+            };
 
             await delay(polling_interval);
         };

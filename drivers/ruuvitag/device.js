@@ -68,18 +68,17 @@ class Tag extends Homey.Device {
       this.log('RuuviTag device has been deleted');
   }
 
-    async updateTag(foundDevices) {
+    async updateTag(bleAdv) {
         console.log(`Updating RuuviTag ${this.getName()}`);
         let deviceData = this.getData();
         let settings = this.getSettings();
 
-        foundDevices.then(devices => devices.find(bleAdv => bleAdv.uuid == deviceData.uuid))
-            .then(bleAdv => {
-                if (bleAdv != undefined) {
-                    this.setCapabilityValue('measure_rssi', bleAdv.rssi);
-                    return bleAdv.manufacturerData;
-                }
-                else throw new Error(`No scanned data for device ${this.getName()}`);
+        bleAdv.then(bleAdv => {
+            if (bleAdv != undefined) {
+                this.setCapabilityValue('measure_rssi', bleAdv.rssi);
+                return bleAdv.manufacturerData;
+            }
+            else throw new Error(`No scanned data for device ${this.getName()}`);
             })
             .then(buffer => {
                 if (deviceData.dataformat == readFormat(buffer)) return validateDataFormat(deviceData.dataformat, buffer);
@@ -140,11 +139,12 @@ class Tag extends Homey.Device {
             .catch(error => {
                 console.log(`Error/no data available when updating Tag ${this.getName()} with uuid ${deviceData.uuid}`);
                 console.log(error);
+
                 //decreasing TTL
-                let TTL = this.getStoreValue('TTL') - 1; 
-                this.setStoreValue('TTL', TTL);
+                let TTL = this.getStoreValue('TTL') - 1;
+                if(TTL >= 0) this.setStoreValue('TTL', TTL);
                 //marking as away if TTL = 0 
-                if(TTL <= 0) this.setOutsideRange();
+                if (TTL <= 0) this.setOutsideRange();
             }); 
     }
 
@@ -159,7 +159,7 @@ class Tag extends Homey.Device {
             if (this.getSetting('enable_notif')) {
                 this.homey.notifications.createNotification({
                     excerpt: `RuuviTag ${this.getName()} entered range`
-                }) ;
+                }).catch(error => { this.error('Error sending notification: ' + error.message) });
             }
 
             //launching trigger
@@ -177,8 +177,6 @@ class Tag extends Homey.Device {
     }
 
     setOutsideRange() {
-        this.setStoreValue('TTL', 0);    
-
         //trigger only if state changed
         if (this.getCapabilityValue('onoff')) {
             //showing token as off
@@ -188,7 +186,7 @@ class Tag extends Homey.Device {
             if (this.getSetting('enable_notif')) {
                 this.homey.notifications.createNotification({
                     excerpt: `RuuviTag ${this.getName()} exited range`
-                });
+                }).catch(error => { this.error('Error sending notification: ' + error.message) });
             }
 
             //launching trigger

@@ -1,6 +1,6 @@
 {
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "compatibility": ">=6.0.0",
   "sdk": 3,
   "name": {
