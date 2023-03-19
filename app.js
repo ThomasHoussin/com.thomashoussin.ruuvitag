@@ -12,6 +12,8 @@ class MyApp extends Homey.App {
     async onInit() {
         this.log('MyApp has been initialized');
 
+        // register system events
+        this.homey.on('memwarn', () => console.log('memwarn!'));
 
     }
 

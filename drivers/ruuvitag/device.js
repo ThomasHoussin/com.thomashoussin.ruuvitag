@@ -35,7 +35,9 @@ class Tag extends Homey.Device {
   /**
    * onAdded is called when the user adds the device, called just after pairing.
    */
-  async onAdded() {
+    async onAdded() {
+      // Refreshing devices list
+      this.driver.emit('refreshDevices');
       this.log('RuuviTag device has been added');
   }
 
@@ -64,7 +66,9 @@ class Tag extends Homey.Device {
   /**
    * onDeleted is called when the user deleted the device.
    */
-  async onDeleted() {
+    async onDeleted() {
+        // Refreshing devices list
+        this.driver.emit('refreshDevices');
       this.log('RuuviTag device has been deleted');
   }
 
@@ -73,79 +77,75 @@ class Tag extends Homey.Device {
         let deviceData = this.getData();
         let settings = this.getSettings();
 
-        bleAdv.then(bleAdv => {
+        try {
             if (bleAdv != undefined) {
                 this.setCapabilityValue('measure_rssi', bleAdv.rssi);
-                return bleAdv.manufacturerData;
+                let buffer = bleAdv.manufacturerData;
+
+                if (deviceData.dataformat == readFormat(buffer)) {
+                    validateDataFormat(deviceData.dataformat, buffer);
+
+                    //marking device as present
+                    this.setInsideRange();
+
+                    this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer));
+                    this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer));
+                    this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer));
+                    this.setCapabilityValue('measure_battery', estimateBattery(readBattery(deviceData.dataformat, buffer), settings));
+                    this.setCapabilityValue('acceleration', computeAcceleration(readAccelerationX(deviceData.dataformat, buffer), readAccelerationY(deviceData.dataformat, buffer), readAccelerationZ(deviceData.dataformat, buffer)) / 1000);
+
+                    if (this.hasCapability('alarm_motion') && settings.motiondetection) {
+                        let last_movement_counter = this.getStoreValue('movement_counter');
+                        let movement_counter = readMovementCounter(deviceData.dataformat, buffer);
+                        this.setStoreValue('movement_counter', movement_counter);
+
+                        if (typeof last_movement_counter == 'number') {
+                            let rate = movement_counter - last_movement_counter;
+                            if (rate < 0) rate += 255;
+                            if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
+                            else this.setCapabilityValue('alarm_motion', false);
+                        }
+                    }
+
+                    //saving timestamp of measure
+                    this.setStoreValue('last_measure', Date.now());
+
+                    //we try to detect a reset in sequence number
+                    if (this.hasCapability('alarm_battery')) {
+                        let sequenceNumber = this.getStoreValue('sequence_counter');
+                        let newSequenceNumber = readSequenceNumber(deviceData.dataformat, buffer);
+                        this.setStoreValue('sequence_counter', newSequenceNumber);
+
+                        let elapsed = Date.now() - this.getStoreValue('last_measure');
+                        let inc = (elapsed * 1.2) / 1285;
+
+                        if (newSequenceNumber < sequenceNumber
+                            //reset in sequence number. Is this expected ?
+                            && sequenceNumber + inc < 65535) {
+                            //we use elapsed time to make a rough guess 
+
+                            //reset is probably an anomaly
+                            //probably low bat warning
+                            //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery for more informations
+                            console.log(`RuuviTag ${this.getName()} reset in sequence number`);
+                            this.setCapabilityValue('alarm_battery', true);
+                        }
+                    }
+                }
+
             }
             else throw new Error(`No scanned data for device ${this.getName()}`);
-            })
-            .then(buffer => {
-                if (deviceData.dataformat == readFormat(buffer)) return validateDataFormat(deviceData.dataformat, buffer);
-                else {
-                    console.log(`Difference between dataFormat and read data for ${this.getName()} with uuid ${deviceData.uuid}`);
-                    throw new Error(`Unexpected data in buffer : ${buffer}`);
-                }
-            })
-            .then(buffer => {
-                //marking device as present
-                this.setInsideRange();
+        }
+        catch (error) {
+            console.log(`Error/no data available when updating Tag ${this.getName()} with uuid ${deviceData.uuid}`);
+            console.log(error);
 
-                this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer));
-                this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer));
-                this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer));
-                this.setCapabilityValue('measure_battery', estimateBattery(readBattery(deviceData.dataformat, buffer), settings));
-                this.setCapabilityValue('acceleration', computeAcceleration(readAccelerationX(deviceData.dataformat, buffer), readAccelerationY(deviceData.dataformat, buffer), readAccelerationZ(deviceData.dataformat, buffer)) / 1000 );
-
-                if (this.hasCapability('alarm_motion') && settings.motiondetection) {
-                    let last_movement_counter = this.getStoreValue('movement_counter');
-                    let movement_counter = readMovementCounter(deviceData.dataformat, buffer);
-                    this.setStoreValue('movement_counter', movement_counter);
-
-                    if (typeof last_movement_counter == 'number') {
-                        let rate = movement_counter - last_movement_counter;
-                        if (rate < 0) rate += 255;
-                        if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
-                        else this.setCapabilityValue('alarm_motion', false);
-                    }
-                }
-
-                //we try to detect a reset in sequence number
-                if (this.hasCapability('alarm_battery')) {
-                    let sequenceNumber = this.getStoreValue('sequence_counter');
-                    let newSequenceNumber = readSequenceNumber(deviceData.dataformat, buffer);
-                    this.setStoreValue('sequence_counter', newSequenceNumber);
-
-                    let elapsed = Date.now() - this.getStoreValue('last_measure');
-                    let inc = (elapsed * 1.2) / 1285; 
-
-                    if (newSequenceNumber < sequenceNumber
-                        //reset in sequence number. Is this expected ?
-                        && sequenceNumber + inc < 65535) {
-                        //we use elapsed time to make a rough guess 
-
-                        //reset is probably an anomaly
-                        //probably low bat warning
-                        //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery for more informations
-                        console.log(`RuuviTag ${this.getName()} reset in sequence number`);
-                        this.setCapabilityValue('alarm_battery', true);
-                    }
-                }
-
-                //saving timestamp of measure
-                this.setStoreValue('last_measure', Date.now());
-
-            })
-            .catch(error => {
-                console.log(`Error/no data available when updating Tag ${this.getName()} with uuid ${deviceData.uuid}`);
-                console.log(error);
-
-                //decreasing TTL
-                let TTL = this.getStoreValue('TTL') - 1;
-                if(TTL >= 0) this.setStoreValue('TTL', TTL);
-                //marking as away if TTL = 0 
-                if (TTL <= 0) this.setOutsideRange();
-            }); 
+            //decreasing TTL
+            let TTL = this.getStoreValue('TTL') - 1;
+            if (TTL >= 0) this.setStoreValue('TTL', TTL);
+            //marking as away if TTL = 0 
+            if (TTL <= 0) this.setOutsideRange();
+        }
     }
 
     setInsideRange() {

@@ -3,8 +3,13 @@
 const Homey = require('homey');
 const delay = s => new Promise(resolve => setTimeout(resolve, 1000 * s));
 
+
 class RuuviTag extends Homey.Driver {
-  /**
+
+    //listing all Ruuvitag
+    ruuvitags = this.getDevices();
+
+    /**
    * onInit is called when the driver is initialized.
    */
   async onInit() {
@@ -17,9 +22,11 @@ class RuuviTag extends Homey.Driver {
       //polling BLE
       this.polling = true;
       this.addListener('poll', this.pollDevice);
+      this.addListener('refreshDevices', this.refreshDevices);
 
       // Initiating device polling
       this.emit('poll');
+
   }
 
   /**
@@ -72,6 +79,13 @@ class RuuviTag extends Homey.Driver {
     }
 
     async pollDevice() {
+
+        //quick fix, moving getDevices out of the loop
+        //listing all Ruuvitag
+        //let ruuvitags = this.getDevices();
+        console.log("Entering poll loop");
+        this.emit('refreshDevices');
+
         while (this.polling) {
             console.log(`Refreshing BLE`);
             let polling_interval = this.homey.settings.get('polling_interval');
@@ -81,21 +95,25 @@ class RuuviTag extends Homey.Driver {
             if (!polling_interval) polling_interval = 60;
             if (!scan_duration) scan_duration = 20;
 
-            //listing all Ruuvitag
-            let ruuvitags = this.getDevices();
-
             //scanning BLE devices
-            let foundDevices = this.homey.ble.discover([], scan_duration * 1000);
+            let foundDevices = await this.homey.ble.discover([], scan_duration * 1000);
 
             //sending bleAdv to ruuviTag
-            for (const ruuvitag of ruuvitags) {
+            for (const ruuvitag of this.ruuvitags) {
                 let ruuvitagData = ruuvitag.getData() ;
-                ruuvitag.emit('updateTag', foundDevices.then(devices => devices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid)));
+                //ruuvitag.emit('updateTag', foundDevices.then(devices => devices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid)));
+                ruuvitag.emit('updateTag', foundDevices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid));
             };
 
             await delay(polling_interval);
         };
     }
+
+    async refreshDevices() {
+        //listing all Ruuvitag
+        this.ruuvitags = this.getDevices();
+    }
+
 }
 
 module.exports = RuuviTag ;

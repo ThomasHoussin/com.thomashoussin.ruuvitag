@@ -31,5 +31,8 @@
   },
   "0.2.2": {
     "en": "memory leak test"
+  },
+  "0.2.3": {
+    "en": "memory imp. again"
   }
 }
