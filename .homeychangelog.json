@@ -34,5 +34,8 @@
   },
   "0.2.3": {
     "en": "memory imp. again"
+  },
+  "0.2.4": {
+    "en": "custom timeout for BLE discovery removed in Homey v6.0.0"
   }
 }

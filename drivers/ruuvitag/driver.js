@@ -39,7 +39,7 @@ class RuuviTag extends Homey.Driver {
         let devices = [];
         const ManufacturerID = Buffer.from('9904', 'hex');
 
-        const foundDevices = await this.homey.ble.discover([], 25 * 1000);
+        const foundDevices = await this.homey.ble.discover();
 
         foundDevices.forEach(device => {
             //discard all but Ruuvi devices
