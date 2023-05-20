@@ -43,7 +43,8 @@ class MyApp extends Homey.App {
             throw new Error('Unexpected data in POST request');
         }
         catch (error) {
-            return error;
+            console.log("Error when updating data from api");
+            console.log(error);
         }
     }
 }

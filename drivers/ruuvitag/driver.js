@@ -41,39 +41,45 @@ class RuuviTag extends Homey.Driver {
 
         const foundDevices = await this.homey.ble.discover();
 
-        foundDevices.forEach(device => {
-            //discard all but Ruuvi devices
-            if (typeof device.manufacturerData == 'undefined'
-                || device.manufacturerData.length <= 2
-                || ManufacturerID.compare(device.manufacturerData, 0, 2) != 0)
-                return;
+        try {
+            foundDevices.forEach(device => {
+                //discard all but Ruuvi devices
+                if (typeof device.manufacturerData == 'undefined'
+                    || device.manufacturerData.length <= 2
+                    || ManufacturerID.compare(device.manufacturerData, 0, 2) != 0)
+                    return;
 
-            let new_device =
-            {
-                name: device.address,
-                data: {
-                    id: device.id,
-                    uuid: device.uuid,
-                    address: device.address,
-                    dataformat: device.manufacturerData[2]
-                },
-                capabilities: [
-                    'measure_battery',
-                    'measure_humidity',
-                    'measure_pressure',
-                    'measure_temperature',
-                    'measure_rssi',
-                    'acceleration',
-                    'onoff'
-                ],
-            };
-            if (device.manufacturerData[2] == 5) {
-                new_device.capabilities.push('alarm_motion');
-                new_device.capabilities.push('alarm_battery');
-                new_device.capabilities.push('button.resetbattery');
-            }
-            devices.push(new_device);
-        });
+                let new_device =
+                {
+                    name: device.address,
+                    data: {
+                        id: device.id,
+                        uuid: device.uuid,
+                        address: device.address,
+                        dataformat: device.manufacturerData[2]
+                    },
+                    capabilities: [
+                        'measure_battery',
+                        'measure_humidity',
+                        'measure_pressure',
+                        'measure_temperature',
+                        'measure_rssi',
+                        'acceleration',
+                        'onoff'
+                    ],
+                };
+                if (device.manufacturerData[2] == 5) {
+                    new_device.capabilities.push('alarm_motion');
+                    new_device.capabilities.push('alarm_battery');
+                    new_device.capabilities.push('button.resetbattery');
+                }
+                devices.push(new_device);
+            });
+        }
+        catch (error) {
+                console.log("Error when searching for ruuvi devices");
+                console.log(error);
+        }
 
         return devices;
     }
@@ -101,7 +107,6 @@ class RuuviTag extends Homey.Driver {
             //sending bleAdv to ruuviTag
             for (const ruuvitag of this.ruuvitags) {
                 let ruuvitagData = ruuvitag.getData() ;
-                //ruuvitag.emit('updateTag', foundDevices.then(devices => devices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid)));
                 ruuvitag.emit('updateTag', foundDevices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid));
             };
 

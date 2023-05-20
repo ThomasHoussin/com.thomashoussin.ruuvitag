@@ -141,6 +141,7 @@ class Tag extends Homey.Device {
             console.log(error);
 
             //decreasing TTL
+            console.log(`Decreasing TTL for ruuviTag ${this.getName()} `);
             let TTL = this.getStoreValue('TTL') - 1;
             if (TTL >= 0) this.setStoreValue('TTL', TTL);
             //marking as away if TTL = 0 

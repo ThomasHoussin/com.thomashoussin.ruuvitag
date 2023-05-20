@@ -37,5 +37,8 @@
   },
   "0.2.4": {
     "en": "custom timeout for BLE discovery removed in Homey v6.0.0"
+  },
+  "0.2.5": {
+    "en": "Fix when no data receveid in BLE adv"
   }
 }
