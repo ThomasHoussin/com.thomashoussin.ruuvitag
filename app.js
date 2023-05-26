@@ -12,6 +12,8 @@ class MyApp extends Homey.App {
     async onInit() {
         this.log('MyApp has been initialized');
 
+        // register system events
+        this.homey.on('memwarn', () => console.log('memwarn!'));
 
     }
 
@@ -41,7 +43,8 @@ class MyApp extends Homey.App {
             throw new Error('Unexpected data in POST request');
         }
         catch (error) {
-            return error;
+            console.log("Error when updating data from api");
+            console.log(error);
         }
     }
 }

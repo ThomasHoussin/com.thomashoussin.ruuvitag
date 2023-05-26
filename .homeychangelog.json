@@ -25,5 +25,20 @@
   },
   "0.2.0": {
     "en": "Update to SDKv3"
+  },
+  "0.2.1": {
+    "en": "Improve memory usage"
+  },
+  "0.2.2": {
+    "en": "memory leak test"
+  },
+  "0.2.3": {
+    "en": "memory imp. again"
+  },
+  "0.2.4": {
+    "en": "custom timeout for BLE discovery removed in Homey v6.0.0"
+  },
+  "0.2.5": {
+    "en": "Fix when no data receveid in BLE adv"
   }
 }

@@ -104,3 +104,7 @@ dist
 .tern-port
 
 .vs/
+
+
+# Added by Homey CLI
+/.homeybuild/
