@@ -1,10 +1,12 @@
 'use strict';
 
 const Homey = require('homey');
-const delay = s => new Promise(resolve => setTimeout(resolve, 1000 * s));
-
 
 class RuuviTag extends Homey.Driver {
+
+    async delay(s) {
+        return new Promise(resolve => this.homey.setTimeout(resolve, 1000 * s));
+    }
 
     //listing all Ruuvitag
     ruuvitags = this.getDevices();
@@ -110,7 +112,7 @@ class RuuviTag extends Homey.Driver {
                 ruuvitag.emit('updateTag', foundDevices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid));
             };
 
-            await delay(polling_interval);
+            await this.delay(polling_interval);
         };
     }
 

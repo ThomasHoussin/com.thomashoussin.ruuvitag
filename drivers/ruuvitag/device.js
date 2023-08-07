@@ -22,7 +22,7 @@ class Tag extends Homey.Device {
 
       if (this.getData().dataformat == 5) {
           this.registerCapabilityListener('button.resetbattery', async () => {
-              this.setCapabilityValue('alarm_battery', false);
+              this.setCapabilityValue('alarm_battery', false).catch(this.error);
               return;
           });
       }
@@ -79,7 +79,7 @@ class Tag extends Homey.Device {
 
         try {
             if (bleAdv != undefined) {
-                this.setCapabilityValue('measure_rssi', bleAdv.rssi);
+                this.setCapabilityValue('measure_rssi', bleAdv.rssi).catch(this.error);
                 let buffer = bleAdv.manufacturerData;
 
                 if (deviceData.dataformat == readFormat(buffer)) {
@@ -88,11 +88,11 @@ class Tag extends Homey.Device {
                     //marking device as present
                     this.setInsideRange();
 
-                    this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer));
-                    this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer));
-                    this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer));
-                    this.setCapabilityValue('measure_battery', estimateBattery(readBattery(deviceData.dataformat, buffer), settings));
-                    this.setCapabilityValue('acceleration', computeAcceleration(readAccelerationX(deviceData.dataformat, buffer), readAccelerationY(deviceData.dataformat, buffer), readAccelerationZ(deviceData.dataformat, buffer)) / 1000);
+                    this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer)).catch(this.error);
+                    this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer)).catch(this.error);
+                    this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer)).catch(this.error);
+                    this.setCapabilityValue('measure_battery', estimateBattery(readBattery(deviceData.dataformat, buffer), settings)).catch(this.error);
+                    this.setCapabilityValue('acceleration', computeAcceleration(readAccelerationX(deviceData.dataformat, buffer), readAccelerationY(deviceData.dataformat, buffer), readAccelerationZ(deviceData.dataformat, buffer)) / 1000).catch(this.error);
 
                     if (this.hasCapability('alarm_motion') && settings.motiondetection) {
                         let last_movement_counter = this.getStoreValue('movement_counter');
@@ -102,8 +102,8 @@ class Tag extends Homey.Device {
                         if (typeof last_movement_counter == 'number') {
                             let rate = movement_counter - last_movement_counter;
                             if (rate < 0) rate += 255;
-                            if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
-                            else this.setCapabilityValue('alarm_motion', false);
+                            if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true).catch(this.error);
+                            else this.setCapabilityValue('alarm_motion', false).catch(this.error);
                         }
                     }
 
@@ -128,7 +128,7 @@ class Tag extends Homey.Device {
                             //probably low bat warning
                             //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery for more informations
                             console.log(`RuuviTag ${this.getName()} reset in sequence number`);
-                            this.setCapabilityValue('alarm_battery', true);
+                            this.setCapabilityValue('alarm_battery', true).catch(this.error);
                         }
                     }
                 }
@@ -154,7 +154,7 @@ class Tag extends Homey.Device {
 
         //showing token as on
         if (!this.getCapabilityValue('onoff')) {
-            this.setCapabilityValue('onoff', true);
+            this.setCapabilityValue('onoff', true).catch(this.error);
 
             //registering notification if enabled
             if (this.getSetting('enable_notif')) {
@@ -181,7 +181,7 @@ class Tag extends Homey.Device {
         //trigger only if state changed
         if (this.getCapabilityValue('onoff')) {
             //showing token as off
-            this.setCapabilityValue('onoff', false);
+            this.setCapabilityValue('onoff', false).catch(this.error);
 
             //registering notification if enabled
             if (this.getSetting('enable_notif')) {
@@ -207,12 +207,12 @@ class Tag extends Homey.Device {
     async updateTagFromGateway(tag) {
         let settings = this.getSettings();
 
-        this.setCapabilityValue('measure_rssi', tag.rssi);
-        this.setCapabilityValue('measure_temperature', tag.temperature);
-        this.setCapabilityValue('measure_pressure', tag.pressure / 100);
-        this.setCapabilityValue('measure_humidity', tag.humidity);
-        this.setCapabilityValue('measure_battery', estimateBattery(tag.voltage * 1000, settings ));
-        this.setCapabilityValue('acceleration', computeAcceleration(tag.accelX, tag.accelY, tag.accelZ));
+        this.setCapabilityValue('measure_rssi', tag.rssi).catch(this.error);
+        this.setCapabilityValue('measure_temperature', tag.temperature).catch(this.error);
+        this.setCapabilityValue('measure_pressure', tag.pressure / 100).catch(this.error);
+        this.setCapabilityValue('measure_humidity', tag.humidity).catch(this.error);
+        this.setCapabilityValue('measure_battery', estimateBattery(tag.voltage * 1000, settings)).catch(this.error);
+        this.setCapabilityValue('acceleration', computeAcceleration(tag.accelX, tag.accelY, tag.accelZ)).catch(this.error);
 
         if (this.hasCapability('alarm_motion') && settings.motiondetection) {
             let last_movement_counter = this.getStoreValue('movement_counter');
@@ -222,8 +222,8 @@ class Tag extends Homey.Device {
             if (typeof last_movement_counter == 'number') {
                 let rate = movement_counter - last_movement_counter;
                 if (rate < 0) rate += 255;
-                if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
-                else this.setCapabilityValue('alarm_motion', false);
+                if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true).catch(this.error);
+                else this.setCapabilityValue('alarm_motion', false).catch(this.error);
             }
         }
     }

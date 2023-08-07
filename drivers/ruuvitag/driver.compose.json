@@ -4,6 +4,8 @@
     "en": "RuuviTag"
   },
   "class": "sensor",
+  "platforms": [ "local", "cloud" ],
+  "connectivity": [ "ble" ],
   "capabilities": [
     "measure_battery",
     "measure_humidity",
@@ -27,8 +29,8 @@
     }
   },
   "images": {
-    "large": "/drivers/ruuvitag/assets/images/large.png",
-    "small": "/drivers/ruuvitag/assets/images/small.png"
+    "large": "./drivers/ruuvitag/assets/images/large.png",
+    "small": "./drivers/ruuvitag/assets/images/small.png"
   },
   "energy": {
     "batteries": [ "CR2477" ]

@@ -3,6 +3,7 @@
   "title": {
     "en": "Exited range"
   },
+  "platforms": [ "local", "cloud" ],
   "tokens": [
     {
       "name": "name",
