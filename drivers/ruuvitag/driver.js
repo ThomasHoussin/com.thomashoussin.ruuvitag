@@ -60,14 +60,17 @@ class RuuviTag extends Homey.Driver {
                     },
                     capabilities: [
                         'measure_battery',
-                        'measure_humidity',
-                        'measure_pressure',
                         'measure_temperature',
                         'measure_rssi',
                         'acceleration',
                         'onoff'
                     ],
                 };
+
+                // do not add capabilities not supported for Ruuvitag pro
+                if (new_device.data.dataformat != 5 || device.manufacturerData.readUInt16BE(7) != 65535) new_device.capabilities.push('measure_pressure');
+                if (new_device.data.dataformat != 5 || device.manufacturerData.readUInt16BE(5) != 65535) new_device.capabilities.push('measure_humidity');
+                    
                 if (device.manufacturerData[2] == 5) {
                     new_device.capabilities.push('alarm_motion');
                     new_device.capabilities.push('alarm_battery');

@@ -1,10 +1,11 @@
 {
   "type": "boolean",
   "uiComponent": null,
-  "uiQuickAction": true,
+  "uiQuickAction": false,
   "getable": true,
   "setable": false,
   "insights": false,
+  "greyout": false,
   "title": {
     "en": "Present"
   }

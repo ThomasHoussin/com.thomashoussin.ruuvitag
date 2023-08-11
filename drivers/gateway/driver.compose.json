@@ -1,0 +1,26 @@
+{
+  "name": {
+    "en": "gateway"
+  },
+  "class": "sensor",
+  "capabilities": [
+    "measure_battery",
+    "alarm_battery",
+    "button",
+    "measure_humidity",
+    "measure_pressure",
+    "measure_temperature",
+    "onoff"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+  }
+}

@@ -28,7 +28,6 @@ class Tag extends Homey.Device {
       }
 
       this.addListener('updateTag', this.updateTag);
-      this.addListener('updateTagFromGateway', this.updateTagFromGateway);
    }
 
 
@@ -88,11 +87,11 @@ class Tag extends Homey.Device {
                     //marking device as present
                     this.setInsideRange();
 
-                    this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer));
-                    this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer));
-                    this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer));
-                    this.setCapabilityValue('measure_battery', estimateBattery(readBattery(deviceData.dataformat, buffer), settings));
-                    this.setCapabilityValue('acceleration', computeAcceleration(readAccelerationX(deviceData.dataformat, buffer), readAccelerationY(deviceData.dataformat, buffer), readAccelerationZ(deviceData.dataformat, buffer)) / 1000);
+                    this.setCapabilityValue('measure_temperature', readTemperature(deviceData.dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_pressure')) this.setCapabilityValue('measure_pressure', readPressure(deviceData.dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_humidity')) this.setCapabilityValue('measure_humidity', readHumidity(deviceData.dataformat, buffer)).catch(this.error);
+                    this.setCapabilityValue('measure_battery', estimateBattery(readBattery(deviceData.dataformat, buffer), settings)).catch(this.error);
+                    this.setCapabilityValue('acceleration', computeAcceleration(readAccelerationX(deviceData.dataformat, buffer), readAccelerationY(deviceData.dataformat, buffer), readAccelerationZ(deviceData.dataformat, buffer)) / 1000).catch(this.error);
 
                     if (this.hasCapability('alarm_motion') && settings.motiondetection) {
                         let last_movement_counter = this.getStoreValue('movement_counter');
@@ -145,7 +144,10 @@ class Tag extends Homey.Device {
             let TTL = this.getStoreValue('TTL') - 1;
             if (TTL >= 0) this.setStoreValue('TTL', TTL);
             //marking as away if TTL = 0 
-            if (TTL <= 0) this.setOutsideRange();
+            if (TTL <= 0) {
+                console.log(`Marking ruuviTag ${this.getName()} out of range`);
+                this.setOutsideRange();
+            }
         }
     }
 
@@ -201,30 +203,6 @@ class Tag extends Homey.Device {
                 .catch(function (error) {
                     console.log('Cannot trigger flow card ruuvitag_exited_range: ' + error);
                 });
-        }
-    }
-
-    async updateTagFromGateway(tag) {
-        let settings = this.getSettings();
-
-        this.setCapabilityValue('measure_rssi', tag.rssi);
-        this.setCapabilityValue('measure_temperature', tag.temperature);
-        this.setCapabilityValue('measure_pressure', tag.pressure / 100);
-        this.setCapabilityValue('measure_humidity', tag.humidity);
-        this.setCapabilityValue('measure_battery', estimateBattery(tag.voltage * 1000, settings ));
-        this.setCapabilityValue('acceleration', computeAcceleration(tag.accelX, tag.accelY, tag.accelZ));
-
-        if (this.hasCapability('alarm_motion') && settings.motiondetection) {
-            let last_movement_counter = this.getStoreValue('movement_counter');
-            let movement_counter = tag.movementCounter ;
-            this.setStoreValue('movement_counter', movement_counter);
-
-            if (typeof last_movement_counter == 'number') {
-                let rate = movement_counter - last_movement_counter;
-                if (rate < 0) rate += 255;
-                if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
-                else this.setCapabilityValue('alarm_motion', false);
-            }
         }
     }
 }
