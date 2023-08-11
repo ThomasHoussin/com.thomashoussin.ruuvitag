@@ -22,7 +22,7 @@ class Tag extends Homey.Device {
 
       if (this.getData().dataformat == 5) {
           this.registerCapabilityListener('button.resetbattery', async () => {
-              this.setCapabilityValue('alarm_battery', false);
+              this.setCapabilityValue('alarm_battery', false).catch(this.error);
               return;
           });
       }
@@ -78,7 +78,7 @@ class Tag extends Homey.Device {
 
         try {
             if (bleAdv != undefined) {
-                this.setCapabilityValue('measure_rssi', bleAdv.rssi);
+                this.setCapabilityValue('measure_rssi', bleAdv.rssi).catch(this.error);
                 let buffer = bleAdv.manufacturerData;
 
                 if (deviceData.dataformat == readFormat(buffer)) {
@@ -101,8 +101,8 @@ class Tag extends Homey.Device {
                         if (typeof last_movement_counter == 'number') {
                             let rate = movement_counter - last_movement_counter;
                             if (rate < 0) rate += 255;
-                            if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true);
-                            else this.setCapabilityValue('alarm_motion', false);
+                            if (rate > settings.movement_rate) this.setCapabilityValue('alarm_motion', true).catch(this.error);
+                            else this.setCapabilityValue('alarm_motion', false).catch(this.error);
                         }
                     }
 
@@ -127,7 +127,7 @@ class Tag extends Homey.Device {
                             //probably low bat warning
                             //see https://github.com/ruuvi/ruuvitag_fw/wiki/FAQ:-battery for more informations
                             console.log(`RuuviTag ${this.getName()} reset in sequence number`);
-                            this.setCapabilityValue('alarm_battery', true);
+                            this.setCapabilityValue('alarm_battery', true).catch(this.error);
                         }
                     }
                 }
@@ -156,7 +156,7 @@ class Tag extends Homey.Device {
 
         //showing token as on
         if (!this.getCapabilityValue('onoff')) {
-            this.setCapabilityValue('onoff', true);
+            this.setCapabilityValue('onoff', true).catch(this.error);
 
             //registering notification if enabled
             if (this.getSetting('enable_notif')) {
@@ -183,7 +183,7 @@ class Tag extends Homey.Device {
         //trigger only if state changed
         if (this.getCapabilityValue('onoff')) {
             //showing token as off
-            this.setCapabilityValue('onoff', false);
+            this.setCapabilityValue('onoff', false).catch(this.error);
 
             //registering notification if enabled
             if (this.getSetting('enable_notif')) {

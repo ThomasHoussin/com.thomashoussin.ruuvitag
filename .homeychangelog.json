@@ -40,5 +40,8 @@
   },
   "0.2.5": {
     "en": "Fix when no data receveid in BLE adv"
+  },
+  "0.3.0": {
+    "en": "Test version for cloud support"
   }
 }

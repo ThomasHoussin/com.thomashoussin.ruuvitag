@@ -1,8 +1,12 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "compatibility": ">=6.0.0",
+  "platforms": [
+    "local",
+    "cloud"
+  ],
   "sdk": 3,
   "name": {
     "en": "RuuviTag"
@@ -28,13 +32,6 @@
   "permissions": [
     "homey:wireless:ble"
   ],
-  "api": {
-    "updateData": {
-      "method": "post",
-      "path": "/",
-      "public": true
-    }
-  },
   "images": {
     "large": "/assets/images/large.png",
     "small": "/assets/images/small.png"
@@ -54,6 +51,7 @@
     "url": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag/issues"
   },
   "source": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag",
+  "support": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag",
   "homeyCommunityTopicId": 39495,
   "flow": {
     "triggers": [
@@ -62,6 +60,10 @@
         "title": {
           "en": "Entered range"
         },
+        "platforms": [
+          "local",
+          "cloud"
+        ],
         "tokens": [
           {
             "name": "name",
@@ -91,6 +93,10 @@
         "title": {
           "en": "Exited range"
         },
+        "platforms": [
+          "local",
+          "cloud"
+        ],
         "tokens": [
           {
             "name": "name",
@@ -124,6 +130,13 @@
         "en": "RuuviTag"
       },
       "class": "sensor",
+      "platforms": [
+        "local",
+        "cloud"
+      ],
+      "connectivity": [
+        "ble"
+      ],
       "capabilities": [
         "measure_battery",
         "measure_humidity",
@@ -147,8 +160,8 @@
         }
       },
       "images": {
-        "large": "/drivers/ruuvitag/assets/images/large.png",
-        "small": "/drivers/ruuvitag/assets/images/small.png"
+        "large": "./drivers/ruuvitag/assets/images/large.png",
+        "small": "./drivers/ruuvitag/assets/images/small.png"
       },
       "energy": {
         "batteries": [
