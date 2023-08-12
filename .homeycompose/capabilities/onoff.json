@@ -5,7 +5,7 @@
   "getable": true,
   "setable": false,
   "insights": false,
-  "greyout": false,
+  "greyout": true,
   "title": {
     "en": "Present"
   }

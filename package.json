@@ -4,5 +4,8 @@
   "main": "app.js",
   "devDependencies": {
     "homey": "^2.34.0"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.12"
   }
 }

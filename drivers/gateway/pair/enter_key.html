@@ -1,0 +1,28 @@
+<script type="text/javascript">
+    Homey.setTitle("Specificy Ruuvi Gateway API key (bearer token)");
+
+    function doSubmit(){
+        let token = document.getElementById('token').value;
+        if (!token){
+            Homey.alert('Please fill in all fields');
+        }
+        else {
+            Homey.emit('validate', { "token": token })
+                .then(result => {
+                    if (result == 'ok' ) {
+                        Homey.nextView();
+                    } else {
+                        Homey.alert('Unable to connect');
+                    }
+                })
+                .catch(error => {
+                    Homey.alert(error);
+                });
+        }
+    }
+
+</script>
+
+<label for="token">Ruuvi Gateway API key (bearer token)</label>
+<input type="text" id="token" name="token" placeholder="vum0G0DwdUBiNreYdSdqB785SX+l9VsnDQyDclwDP/Q=" required/><br />
+<button type="button" onclick="doSubmit()">Save</button>

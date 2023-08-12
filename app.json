@@ -60,31 +60,11 @@
         "title": {
           "en": "Entered range"
         },
-        "platforms": [
-          "local",
-          "cloud"
-        ],
-        "tokens": [
-          {
-            "name": "name",
-            "type": "string",
-            "title": {
-              "en": "Name"
-            }
-          },
-          {
-            "name": "uuid",
-            "type": "string",
-            "title": {
-              "en": "Ruuvitag uuid"
-            }
-          }
-        ],
         "args": [
           {
-            "name": "Tag",
+            "name": "device",
             "type": "device",
-            "filter": "driver_id=ruuvitag"
+            "filter": "driver_id=ruuvitag|gateway"
           }
         ]
       },
@@ -93,37 +73,185 @@
         "title": {
           "en": "Exited range"
         },
-        "platforms": [
-          "local",
-          "cloud"
-        ],
-        "tokens": [
-          {
-            "name": "name",
-            "type": "string",
-            "title": {
-              "en": "Name"
-            }
-          },
-          {
-            "name": "uuid",
-            "type": "string",
-            "title": {
-              "en": "Ruuvitag uuid"
-            }
-          }
-        ],
         "args": [
           {
-            "name": "Tag",
+            "name": "device",
             "type": "device",
-            "filter": "driver_id=ruuvitag"
+            "filter": "driver_id=ruuvitag|gateway"
           }
         ]
       }
     ]
   },
   "drivers": [
+    {
+      "name": {
+        "en": "Ruuvi Gateway"
+      },
+      "class": "sensor",
+      "energy": {
+        "batteries": [
+          "CR2477"
+        ]
+      },
+      "capabilities": [
+        "measure_battery",
+        "alarm_battery",
+        "button.resetbattery",
+        "measure_humidity",
+        "measure_pressure",
+        "measure_temperature",
+        "measure_rssi",
+        "acceleration",
+        "onoff"
+      ],
+      "capabilitiesOptions": {
+        "button.resetbattery": {
+          "maintenanceAction": true,
+          "title": {
+            "en": "Reset alarm battery"
+          },
+          "desc": {
+            "en": "This will reset alarm battery"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "pair": [
+        {
+          "id": "enter_key",
+          "next": "list_devices"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "prev": "enter_key",
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "discovery": "ruuvigateway",
+      "images": {
+        "small": "/drivers/gateway/assets/images/small.png",
+        "large": "/drivers/gateway/assets/images/large.png",
+        "xlarge": "/drivers/gateway/assets/images/xlarge.png"
+      },
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Battery settings"
+          },
+          "children": [
+            {
+              "id": "batt_mini",
+              "type": "number",
+              "value": 2500,
+              "label": {
+                "en": "Minimum value for battery voltage, in mV"
+              }
+            },
+            {
+              "id": "batt_maxi",
+              "type": "number",
+              "value": 3000,
+              "label": {
+                "en": "Maximum value for battery voltage, in mV"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Request settings"
+          },
+          "children": [
+            {
+              "id": "token",
+              "type": "text",
+              "label": {
+                "en": "API key (bearer token)"
+              }
+            },
+            {
+              "id": "polling_interval",
+              "type": "number",
+              "value": 60,
+              "label": {
+                "en": "Polling interval in seconds"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Movement settings"
+          },
+          "children": [
+            {
+              "id": "motiondetection",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Enable motion detection"
+              }
+            },
+            {
+              "id": "movement_rate",
+              "type": "number",
+              "value": 1,
+              "min": 1,
+              "max": 254,
+              "label": {
+                "en": "Movement rate to trigger motion alarm (1 : most sensitive)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Presence settings"
+          },
+          "children": [
+            {
+              "id": "TTL",
+              "type": "number",
+              "value": 10,
+              "min": 1,
+              "max": 60,
+              "label": {
+                "en": "Number of attempts before marking as out"
+              }
+            },
+            {
+              "id": "enable_notif",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show notifications when entering/leaving range"
+              }
+            }
+          ]
+        }
+      ],
+      "id": "gateway"
+    },
     {
       "id": "ruuvitag",
       "name": {
@@ -302,6 +430,27 @@
       "title": {
         "en": "Present"
       }
+    }
+  },
+  "discovery": {
+    "ruuvigateway": {
+      "type": "mdns-sd",
+      "mdns-sd": {
+        "name": "http",
+        "protocol": "tcp"
+      },
+      "id": "{{name}}",
+      "conditions": [
+        [
+          {
+            "field": "name",
+            "match": {
+              "type": "string",
+              "value": "RuuviGateway"
+            }
+          }
+        ]
+      ]
     }
   }
 }

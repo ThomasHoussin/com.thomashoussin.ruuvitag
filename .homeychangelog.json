@@ -43,5 +43,8 @@
   },
   "0.3.0": {
     "en": "Test version for cloud support"
+  },
+  "0.3.1": {
+    "en": "First version with gateway support (WIP), ruuvipro improvments, trigger fix"
   }
 }
