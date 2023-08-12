@@ -65,8 +65,8 @@ class MyDriver extends Driver {
                     };
 
                     // do not add capabilities not supported for Ruuvitag pro
-                    if (new_device.data.dataformat != 5 || fn.readPressure(new_device.data.dataformat, buffer) != 65535) new_device.capabilities.push('measure_pressure');
-                    if (new_device.data.dataformat != 5 || fn.readHumidity(new_device.data.dataformat, buffer) != 65535) new_device.capabilities.push('measure_humidity');
+                    if (new_device.data.dataformat != 5 || buffer.readUInt16BE(7) != 65535) new_device.capabilities.push('measure_pressure');
+                    if (new_device.data.dataformat != 5 || buffer.readUInt16BE(5) != 65535) new_device.capabilities.push('measure_humidity');
 
                     if (new_device.data.dataformat == 5) {
                         new_device.capabilities.push('alarm_motion');
