@@ -132,7 +132,7 @@ class MyDevice extends Device {
         }
 
         let buffer = Buffer.from(data.data.substring(10), 'hex');
-        let dataformat = fn.readFormat(buffer);
+        let dataformat = this.getData().dataformat ;
 
         fn.validateDataFormat(dataformat, buffer);
 

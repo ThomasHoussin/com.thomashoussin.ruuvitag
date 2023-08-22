@@ -46,5 +46,8 @@
   },
   "0.3.1": {
     "en": "First version with gateway support (WIP), ruuvipro improvments, trigger fix"
+  },
+  "0.3.2": {
+    "en": "Code factoring"
   }
 }
