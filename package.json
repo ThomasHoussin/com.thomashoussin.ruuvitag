@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "main": "app.js",
   "devDependencies": {
-    "homey": "^2.34.0"
+    "homey": "^3.7.12"
   },
   "dependencies": {
-    "node-fetch": "^2.6.12"
+    "node-fetch": "^2.7.0"
   }
 }

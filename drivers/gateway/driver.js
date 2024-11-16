@@ -95,12 +95,3 @@ class MyDriver extends Driver {
 
 module.exports = MyDriver;
 
-function checkResponseStatus(res) {
-    if (res.ok) {
-        return res
-    } else {
-        console.log(`Wrong response status : ${res.status} (${res.statusText})`);
-        throw new Error(`Wrong response status : ${res.status} (${res.statusText})`);
-    }
-}
-

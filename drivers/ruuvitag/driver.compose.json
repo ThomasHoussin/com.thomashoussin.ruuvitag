@@ -4,7 +4,7 @@
     "en": "RuuviTag"
   },
   "class": "sensor",
-  "platforms": [ "local", "cloud" ],
+  "platforms": [ "local"],
   "connectivity": [ "ble" ],
   "capabilities": [
     "measure_battery",

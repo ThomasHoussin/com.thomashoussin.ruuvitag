@@ -123,6 +123,13 @@ class RuuviTag extends Homey.Driver {
     async refreshDevices() {
         //listing all Ruuvitag
         this.ruuvitags = this.getDevices();
+        if(this.ruuvitags.length == 0) this.polling = false ;
+        else {
+            if(!this.polling) {
+                this.polling = true ;
+                this.emit('poll');
+            }
+        }
     }
 
 }
