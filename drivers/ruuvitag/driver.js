@@ -1,10 +1,13 @@
 'use strict';
 
+const fn = require('../../lib/function.js');
 const Homey = require('homey');
-const delay = s => new Promise(resolve => setTimeout(resolve, 1000 * s));
-
 
 class RuuviTag extends Homey.Driver {
+
+    async delay(s) {
+        return new Promise(resolve => this.homey.setTimeout(resolve, 1000 * s));
+    }
 
     //listing all Ruuvitag
     ruuvitags = this.getDevices();
@@ -60,14 +63,17 @@ class RuuviTag extends Homey.Driver {
                     },
                     capabilities: [
                         'measure_battery',
-                        'measure_humidity',
-                        'measure_pressure',
                         'measure_temperature',
                         'measure_rssi',
                         'acceleration',
                         'onoff'
                     ],
                 };
+
+                // do not add capabilities not supported for Ruuvitag pro
+                if (fn.isPressureSupported(new_device.data.dataformat, buffer)) new_device.capabilities.push('measure_pressure');
+                if (fn.isHumiditySupported(new_device.data.dataformat, buffer)) new_device.capabilities.push('measure_humidity');
+                    
                 if (device.manufacturerData[2] == 5) {
                     new_device.capabilities.push('alarm_motion');
                     new_device.capabilities.push('alarm_battery');
@@ -110,7 +116,7 @@ class RuuviTag extends Homey.Driver {
                 ruuvitag.emit('updateTag', foundDevices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid));
             };
 
-            await delay(polling_interval);
+            await this.delay(polling_interval);
         };
     }
 

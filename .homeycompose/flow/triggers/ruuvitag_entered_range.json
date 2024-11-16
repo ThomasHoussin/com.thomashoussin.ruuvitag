@@ -3,27 +3,11 @@
   "title": {
     "en": "Entered range"
   },
-  "tokens": [
-    {
-      "name": "name",
-      "type": "string",
-      "title": {
-        "en": "Name"
-      }
-    },
-    {
-      "name": "uuid",
-      "type": "string",
-      "title": {
-        "en": "Ruuvitag uuid"
-      }
-    }
-  ],
   "args": [
     {
-      "name": "Tag",
+      "name": "device",
       "type": "device",
-      "filter": "driver_id=ruuvitag"
+      "filter": "driver_id=ruuvitag|gateway"
     }
   ]
 }

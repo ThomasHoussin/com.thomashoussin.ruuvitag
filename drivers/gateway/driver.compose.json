@@ -1,21 +1,21 @@
 {
-  "id": "ruuvitag",
   "name": {
-    "en": "RuuviTag"
+    "en": "Ruuvi Gateway"
   },
   "class": "sensor",
-  "platforms": [ "local", "cloud" ],
-  "connectivity": [ "ble" ],
+  "energy": {
+    "batteries": [ "CR2477" ]
+  },
   "capabilities": [
     "measure_battery",
+    "alarm_battery",
+    "button.resetbattery",
     "measure_humidity",
     "measure_pressure",
     "measure_temperature",
     "measure_rssi",
     "acceleration",
-    "onoff",
-    "alarm_battery",
-    "button.resetbattery"
+    "onoff"
   ],
   "capabilitiesOptions": {
     "button.resetbattery": {
@@ -28,12 +28,38 @@
       }
     }
   },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
+  "pair": [
+    {
+      "id": "enter_key",
+      "next": "list_devices"
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "prev": "enter_key",
+        "next": "add_devices"
+      },
+      "options": {
+        "singular": false
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "discovery": "ruuvigateway",
   "images": {
-    "large": "./drivers/ruuvitag/assets/images/large.png",
-    "small": "./drivers/ruuvitag/assets/images/small.png"
-  },
-  "energy": {
-    "batteries": [ "CR2477" ]
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
   },
   "settings": [
     {
@@ -56,6 +82,29 @@
           "value": 3000,
           "label": {
             "en": "Maximum value for battery voltage, in mV"
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "label": {
+        "en": "Request settings"
+      },
+      "children": [
+        {
+          "id": "token",
+          "type": "text",
+          "label": {
+            "en": "API key (bearer token)"
+          }
+        },
+        {
+          "id": "polling_interval",
+          "type": "number",
+          "value": 60,
+          "label": {
+            "en": "Polling interval in seconds"
           }
         }
       ]
@@ -111,22 +160,6 @@
           }
         }
       ]
-    }
-  ],
-  "pair": [
-    {
-      "id": "list_devices",
-      "template": "list_devices",
-      "navigation": {
-        "next": "add_devices"
-      },
-      "options": {
-        "singular": false
-      }
-    },
-    {
-      "id": "add_devices",
-      "template": "add_devices"
     }
   ]
 }

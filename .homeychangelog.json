@@ -40,5 +40,14 @@
   },
   "0.2.5": {
     "en": "Fix when no data receveid in BLE adv"
+  },
+  "0.3.0": {
+    "en": "Test version for cloud support"
+  },
+  "0.3.1": {
+    "en": "First version with gateway support (WIP), ruuvipro improvments, trigger fix"
+  },
+  "0.3.2": {
+    "en": "Code factoring"
   }
 }
