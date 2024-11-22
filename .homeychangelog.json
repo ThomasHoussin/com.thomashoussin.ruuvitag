@@ -49,5 +49,11 @@
   },
   "0.3.2": {
     "en": "Code factoring"
+  },
+  "0.3.3": {
+    "en": "Bugfixes in gateway"
+  },
+  "0.3.4": {
+    "en": "Typo in import"
   }
 }

@@ -40,7 +40,7 @@ class MyDriver extends Driver {
             return fetch(validationUrl, {
                 headers: requestHeaders
             })
-                .then(checkResponseStatus)
+                .then(fn.checkResponseStatus)
                 .then(result => result.json())
                 .then(json => Object.keys(json.data.tags).map(id => {
                     let buffer = Buffer.from(json.data.tags[id].data.substring(10),'hex') ;
