@@ -10,8 +10,8 @@
       {
         "field": "name",
         "match": {
-          "type": "string",
-          "value": "RuuviGateway"
+          "type": "regex",
+          "value": "^RuuviGateway"
         }
       }
     ]

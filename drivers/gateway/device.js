@@ -88,7 +88,7 @@ class MyDevice extends Device {
             //scanning BLE devices
             let token = settings.token;
 
-            const validationUrl = `http://${data.hostname}.local/history`;
+            const validationUrl = `http://${data.hostname}/history`;
             const requestHeaders = new fetch.Headers({
                 "Authorization": `Bearer ${token}`
             });
@@ -123,7 +123,7 @@ class MyDevice extends Device {
             console.log(`Decreasing TTL for ruuviTag ${this.getName()} `);
             let TTL = this.getStoreValue('TTL') - 1;
             if (TTL >= 0) this.setStoreValue('TTL', TTL);
-            //marking as away if TTL = 0 
+            //marking as away if TTL = 0
             if (TTL <= 0) {
                 console.log(`Marking ruuviTag ${this.getName()} out of range`);
                 this.setOutsideRange();

@@ -30,7 +30,7 @@ class MyDriver extends Driver {
             console.log("Validate connection bearer token");
             let token = data.token;
 
-            const validationUrl = `http://${discoveryResult.host}.local/history`;
+            const validationUrl = `http://${discoveryResult.host}/history`;
             const requestHeaders = new fetch.Headers({
                 "Authorization": `Bearer ${token}`
             });
@@ -49,7 +49,7 @@ class MyDriver extends Driver {
                         data: {
                             id: id,
                             hostname: discoveryResult.host ,
-                            dataformat: fn.readFormat(buffer) 
+                            dataformat: fn.readFormat(buffer)
                         },
                         capabilities: [
                             'measure_battery',
