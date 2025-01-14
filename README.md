@@ -42,6 +42,12 @@ Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+###  v0.3.5
+    - Detects if hostname ends with .local in gateway autodiscovery
+###  v0.3.4
+    - Typo in import
+###  v0.3.3
+    - Bugfixes in gateway
 ###  v0.3.2
     - Code factoring
 ###  v0.3.1
