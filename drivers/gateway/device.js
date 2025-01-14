@@ -88,7 +88,9 @@ class MyDevice extends Device {
             //scanning BLE devices
             let token = settings.token;
 
-            const validationUrl = `http://${data.hostname}.local/history`;
+            // Construct the hostname with .local only if it's not already present
+            const hostname = data.hostname.endsWith('.local') ? data.hostname : `${data.hostname}.local`;
+            const validationUrl = `http://${hostname}/history`;
             const requestHeaders = new fetch.Headers({
                 "Authorization": `Bearer ${token}`
             });
