@@ -29,8 +29,11 @@ class MyDriver extends Driver {
         session.setHandler('validate', async function (data) {
             console.log("Validate connection bearer token");
             let token = data.token;
+            
+            // Construct the hostname with .local only if it's not already present
+            const hostname = discoveryResult.host.endsWith('.local') ? discoveryResult.host : `${discoveryResult.host}.local`;
+            const validationUrl = `http://${hostname}/history?decode=false`;
 
-            const validationUrl = `http://${discoveryResult.host}.local/history`;
             const requestHeaders = new fetch.Headers({
                 "Authorization": `Bearer ${token}`
             });

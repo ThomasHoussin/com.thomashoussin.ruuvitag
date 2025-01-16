@@ -68,7 +68,7 @@ class MyDevice extends Device {
 
     onDiscoveryResult(discoveryResult) {
         // Return a truthy value here if the discovery result matches your device.
-        return discoveryResult.host === this.getData().hostname;
+        return discoveryResult.host.replace('.local', '') === this.getData().hostname.replace('.local', '');
     }
 
     async onDiscoveryAvailable(discoveryResult) {
