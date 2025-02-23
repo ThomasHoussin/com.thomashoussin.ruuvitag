@@ -14,12 +14,9 @@ This apps allows integration of RuuviTag (RAWv1 and RAWv2 format) in Homey, allo
 
 Scan duration (how long homey listens for BLE advertisment) and polling interval (how long between two scans) can be configured in app settings.
 
-The app also allows Homey to act as a Ruuvi Station gateway. 
-- Before v0.2 : You have to allow public access in the app settings (default is private) ; 
-- In v0.2 : gateway is public by default ; due to changes in SDKv3, access is public and cannot be changed. 
+This apps allows integration of RuuviTag Gateway in Homey. You need first to activate API-key (bearer token) in Ruuvi Gateway ; see https://docs.ruuvi.com/gw-examples/polling-mode for more information. After that Homey will poll the latest data with timestamps from the gateway. 
+Gateway IP adress should be auto-detected ; you need to enter the bearer token in the next screen, and then choose Ruuvitag to add in Homey. 
 
-Then in Ruuvi Station, in gateway settings, use : 
-- http://<your_ip>/api/app/com.thomashoussin.ruuvitag for local access only
-- https://<cloudid>.connect.athom.com/api/app/com.thomashoussin.ruuvitag (cloudId can be found on http://developer.athom.com/tools/system)
+The driver offers the same capabilities as the Ruuvitag driver. Polling interval can be setup for each device independently. 
 
-Device must have been locally added in Homey ; after that, data received through update Ruuvitag device (if device is unknown, data is discarded). Presence is not modified when receiving data through gateway. 
+If you want to use several Ruuvi gateway, you should plug only one at a time during setup.

@@ -29,8 +29,11 @@ class MyDriver extends Driver {
         session.setHandler('validate', async function (data) {
             console.log("Validate connection bearer token");
             let token = data.token;
+            
+            // Construct the hostname with .local only if it's not already present
+            const hostname = discoveryResult.host.endsWith('.local') ? discoveryResult.host : `${discoveryResult.host}.local`;
+            const validationUrl = `http://${hostname}/history?decode=false`;
 
-            const validationUrl = `http://${discoveryResult.host}.local/history`;
             const requestHeaders = new fetch.Headers({
                 "Authorization": `Bearer ${token}`
             });
@@ -40,7 +43,7 @@ class MyDriver extends Driver {
             return fetch(validationUrl, {
                 headers: requestHeaders
             })
-                .then(checkResponseStatus)
+                .then(fn.checkResponseStatus)
                 .then(result => result.json())
                 .then(json => Object.keys(json.data.tags).map(id => {
                     let buffer = Buffer.from(json.data.tags[id].data.substring(10),'hex') ;
@@ -94,13 +97,4 @@ class MyDriver extends Driver {
 }
 
 module.exports = MyDriver;
-
-function checkResponseStatus(res) {
-    if (res.ok) {
-        return res
-    } else {
-        console.log(`Wrong response status : ${res.status} (${res.statusText})`);
-        throw new Error(`Wrong response status : ${res.status} (${res.statusText})`);
-    }
-}
 

@@ -18,15 +18,15 @@ This apps allows integration of RuuviTag and Ruuvitag Pro (RAWv1 and RAWv2 forma
 
 Scan duration (how long homey listens for BLE advertisment) and polling interval (how long between two scans) can be configured in app settings.
 
-## RuuviTag gateway
+## Ruuvi gateway
 This apps allows integration of RuuviTag Gateway in Homey. You need first to activate API-key (bearer token) in Ruuvi Gateway ; see https://docs.ruuvi.com/gw-examples/polling-mode for more information. After that Homey will poll the latest data with timestamps from the gateway. 
 Gateway IP adress should be auto-detected ; you need to enter the bearer token in the next screen, and then choose Ruuvitag to add in Homey. 
 
-The driver offers the same capabilities as the Ruuvitag driver. 
+The driver offers the same capabilities as the Ruuvitag driver. Polling interval can be setup for each device independently. 
 
-Polling interval can be setup for each device independently. 
+If you want to use several Ruuvi gateway, you should plug only one at a time during setup.
 
-## Ruuvi API (removed in latest test version)
+## Ruuvi API (removed in latest version)
 The app also allows Homey to act as a Ruuvi Station gateway. 
 - Before v0.2 : You have to allow public access in the app settings (default is private) ; 
 - In v0.2 : gateway is public by default ; due to changes in SDKv3, access is public and cannot be changed. 
@@ -42,6 +42,12 @@ Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+###  v0.3.5
+    - Detects if hostname ends with .local in gateway autodiscovery
+###  v0.3.4
+    - Typo in import
+###  v0.3.3
+    - Bugfixes in gateway
 ###  v0.3.2
     - Code factoring
 ###  v0.3.1

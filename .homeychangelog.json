@@ -49,5 +49,17 @@
   },
   "0.3.2": {
     "en": "Code factoring"
+  },
+  "0.3.3": {
+    "en": "Bugfixes in gateway"
+  },
+  "0.3.4": {
+    "en": "Typo in import"
+  },
+  "0.3.5": {
+    "en": "Detects if hostname ends with .local in gateway autodiscovery"
+  },
+  "0.3.6": {
+    "en": "Detects if hostname ends with .local in gateway autodiscovery (fixes)"
   }
 }

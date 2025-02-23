@@ -1,8 +1,10 @@
 {
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.3.2",
+  "version": "0.3.7",
   "compatibility": ">=6.0.0",
-  "platforms": [ "local", "cloud" ],
+  "platforms": [
+    "local"
+  ],
   "sdk": 3,
   "name": {
     "en": "RuuviTag"
@@ -39,7 +41,10 @@
   "contributing": {
     "donate": {
       "paypal": {
-        "username": "thomas.houssin@gmail.com"
+        "username": "thomashoussin958"
+      },
+      "githubSponsors": {
+        "username": "ThomasHoussin"
       }
     }
   },

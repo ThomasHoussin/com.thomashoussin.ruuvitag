@@ -12,6 +12,9 @@ class MyApp extends Homey.App {
         // register system events
         this.homey.on('memwarn', () => console.log('memwarn!'));
 
+        // no listener for onoff capability ; if needed see below
+        // adding listener for capability
+        // see https://apps.developer.homey.app/upgrade-guides/device-capabilities
     }
 
 }

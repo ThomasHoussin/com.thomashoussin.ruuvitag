@@ -4,7 +4,6 @@ const fn = require('../../lib/function.js');
 const fetch = require('node-fetch');
 const { Device } = require('homey');
 
-
 class MyDevice extends Device {
 
     async delay(s) {
@@ -16,11 +15,14 @@ class MyDevice extends Device {
    */
   async onInit() {
       this.log('MyDevice has been initialized');
+    
+      // avoid all pooling at the same time
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 10000));
 
       //polling BLE
-      this.polling = true;
+      this.polling = true;      
       this.addListener('poll', this.pollDevice);
-
+      
       // Initiating device polling
       this.emit('poll');
 
@@ -66,7 +68,7 @@ class MyDevice extends Device {
 
     onDiscoveryResult(discoveryResult) {
         // Return a truthy value here if the discovery result matches your device.
-        return discoveryResult.host === this.getData().hostname;
+        return discoveryResult.host.replace('.local', '') === this.getData().hostname.replace('.local', '');
     }
 
     async onDiscoveryAvailable(discoveryResult) {
@@ -85,12 +87,13 @@ class MyDevice extends Device {
             let settings = this.getSettings();
             let data = this.getData();
 
-            //scanning BLE devices
+            // Scanning BLE devices
             let token = settings.token;
 
             // Construct the hostname with .local only if it's not already present
             const hostname = data.hostname.endsWith('.local') ? data.hostname : `${data.hostname}.local`;
-            const validationUrl = `http://${hostname}/history`;
+            const validationUrl = `http://${hostname}/history?decode=false`;
+
             const requestHeaders = new fetch.Headers({
                 "Authorization": `Bearer ${token}`
             });
@@ -104,9 +107,8 @@ class MyDevice extends Device {
                     this.updateValues(json.data.tags[data.id]);
                 })
                 .catch(error => {
-                    console.log(error);
-                    return error;
-                });
+                    console.log(`Error with device ${this.getName()} : ${error}`);
+                })
 
             await this.delay(settings.polling_interval);
         };
@@ -114,10 +116,15 @@ class MyDevice extends Device {
 
     async updateValues(data) {
         let settings = this.getSettings();
-
+        if (!data) {
+            console.log(`No data when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
+            return ;
+        }
+        if (!data?.timestamp) {
+            console.log(`No timestamp in data when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
+        }
         //discard old data
-        let data_age_seconds = Math.floor(Date.now() / 1000) - parseInt(data.timestamp);
-        if (data_age_seconds > this.getSettings().polling_interval) {
+        if (data?.timestamp && Math.floor(Date.now() / 1000) - parseInt(data.timestamp) > this.getSettings().polling_interval) {
             //Ruuvitag is out of range
             console.log(`Data too old when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
 
