@@ -71,8 +71,8 @@ class RuuviTag extends Homey.Driver {
                 };
 
                 // do not add capabilities not supported for Ruuvitag pro
-                if (fn.isPressureSupported(new_device.data.dataformat, buffer)) new_device.capabilities.push('measure_pressure');
-                if (fn.isHumiditySupported(new_device.data.dataformat, buffer)) new_device.capabilities.push('measure_humidity');
+                if (fn.isPressureSupported(new_device.data.dataformat, device.manufacturerData)) new_device.capabilities.push('measure_pressure');
+                if (fn.isHumiditySupported(new_device.data.dataformat, device.manufacturerData)) new_device.capabilities.push('measure_humidity');
                     
                 if (device.manufacturerData[2] == 5) {
                     new_device.capabilities.push('alarm_motion');
