@@ -61,5 +61,11 @@
   },
   "0.3.6": {
     "en": "Detects if hostname ends with .local in gateway autodiscovery (fixes)"
+  },
+  "0.3.7": {
+    "en": "Version bump"
+  },
+  "0.3.8": {
+    "en": "Fixed bug when adding a new RuuviTag"
   }
 }
