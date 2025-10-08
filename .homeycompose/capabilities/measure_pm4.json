@@ -1,0 +1,13 @@
+{
+  "type": "number",
+  "title": {
+    "en": "PM4"
+  },
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/acceleration.svg",
+  "units": {
+    "en": "μg/m³"
+  },
+  "decimals": 1
+}

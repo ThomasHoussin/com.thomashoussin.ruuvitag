@@ -2,7 +2,7 @@
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.thomashoussin.ruuvitag",
   "version": "0.3.8",
-  "compatibility": ">=6.0.0",
+  "compatibility": ">=12.2.0",
   "platforms": [
     "local"
   ],
@@ -105,7 +105,16 @@
         "measure_temperature",
         "measure_rssi",
         "acceleration",
-        "onoff"
+        "onoff",
+        "measure_co2",
+        "measure_pm1",
+        "measure_pm25",
+        "measure_pm4",
+        "measure_pm10",
+        "measure_nox_index",
+        "measure_tvoc_index",
+        "measure_aqi",
+        "measure_luminance"
       ],
       "capabilitiesOptions": {
         "button.resetbattery": {
@@ -255,6 +264,87 @@
       "id": "gateway"
     },
     {
+      "id": "ruuviair",
+      "name": {
+        "en": "Ruuvi Air"
+      },
+      "class": "sensor",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "ble"
+      ],
+      "capabilities": [
+        "measure_co2",
+        "measure_humidity",
+        "measure_pressure",
+        "measure_temperature",
+        "measure_rssi",
+        "measure_pm1",
+        "measure_pm25",
+        "measure_pm4",
+        "measure_pm10",
+        "measure_nox",
+        "measure_tvoc",
+        "measure_aqi",
+        "onoff"
+      ],
+      "images": {
+        "large": "./drivers/ruuviair/assets/images/large.png",
+        "small": "./drivers/ruuviair/assets/images/small.png"
+      },
+      "energy": {
+        "batteries": [
+          "CR2477"
+        ]
+      },
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Presence settings"
+          },
+          "children": [
+            {
+              "id": "TTL",
+              "type": "number",
+              "value": 10,
+              "min": 1,
+              "max": 60,
+              "label": {
+                "en": "Number of attempts before marking as out"
+              }
+            },
+            {
+              "id": "enable_notif",
+              "type": "checkbox",
+              "value": true,
+              "label": {
+                "en": "Show notifications when entering/leaving range"
+              }
+            }
+          ]
+        }
+      ],
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    },
+    {
       "id": "ruuvitag",
       "name": {
         "en": "RuuviTag"
@@ -268,14 +358,23 @@
       ],
       "capabilities": [
         "measure_battery",
+        "alarm_battery",
+        "button.resetbattery",
         "measure_humidity",
         "measure_pressure",
         "measure_temperature",
         "measure_rssi",
         "acceleration",
         "onoff",
-        "alarm_battery",
-        "button.resetbattery"
+        "measure_co2",
+        "measure_pm1",
+        "measure_pm25",
+        "measure_pm4",
+        "measure_pm10",
+        "measure_nox_index",
+        "measure_tvoc_index",
+        "measure_aqi",
+        "measure_luminance"
       ],
       "capabilitiesOptions": {
         "button.resetbattery": {
@@ -404,6 +503,29 @@
       "icon": "/assets/acceleration.svg",
       "units": {
         "en": "g"
+      },
+      "decimals": 1
+    },
+    "measure_nox_index": {
+      "type": "number",
+      "title": {
+        "en": "NOX index"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/acceleration.svg",
+      "decimals": 0
+    },
+    "measure_pm4": {
+      "type": "number",
+      "title": {
+        "en": "PM4"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/acceleration.svg",
+      "units": {
+        "en": "μg/m³"
       },
       "decimals": 1
     },

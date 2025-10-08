@@ -1,0 +1,10 @@
+{
+  "type": "number",
+  "title": {
+    "en": "NOX index"
+  },
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/acceleration.svg",
+  "decimals": 0
+}

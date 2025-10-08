@@ -15,27 +15,27 @@ class RuuviTag extends Homey.Driver {
     /**
    * onInit is called when the driver is initialized.
    */
-  async onInit() {
-      this.log('RuuviTag driver has been initialized');
+    async onInit() {
+        this.log('RuuviTag driver has been initialized');
 
-      // Registering trigger
-      this.RuuviTagEnteredRange = this.homey.flow.getDeviceTriggerCard('ruuvitag_entered_range');
-      this.RuuviTagExitedRange = this.homey.flow.getDeviceTriggerCard('ruuvitag_exited_range');
+        // Registering trigger
+        this.RuuviTagEnteredRange = this.homey.flow.getDeviceTriggerCard('ruuvitag_entered_range');
+        this.RuuviTagExitedRange = this.homey.flow.getDeviceTriggerCard('ruuvitag_exited_range');
 
-      //polling BLE
-      this.polling = true;
-      this.addListener('poll', this.pollDevice);
-      this.addListener('refreshDevices', this.refreshDevices);
+        //polling BLE
+        this.polling = true;
+        this.addListener('poll', this.pollDevice);
+        this.addListener('refreshDevices', this.refreshDevices);
 
-      // Initiating device polling
-      this.emit('poll');
+        // Initiating device polling
+        this.emit('poll');
 
-  }
+    }
 
-  /**
-   * onPairListDevices is called when a user is adding a device and the 'list_devices' view is called.
-   * This should return an array with the data of devices that are available for pairing.
-   */
+    /**
+     * onPairListDevices is called when a user is adding a device and the 'list_devices' view is called.
+     * This should return an array with the data of devices that are available for pairing.
+     */
     async onPairListDevices() {
         console.log("Searching for Ruuvi devices...");
 
@@ -62,10 +62,8 @@ class RuuviTag extends Homey.Driver {
                         dataformat: device.manufacturerData[2]
                     },
                     capabilities: [
-                        'measure_battery',
                         'measure_temperature',
                         'measure_rssi',
-                        'acceleration',
                         'onoff'
                     ],
                 };
@@ -73,18 +71,43 @@ class RuuviTag extends Homey.Driver {
                 // do not add capabilities not supported for Ruuvitag pro
                 if (fn.isPressureSupported(new_device.data.dataformat, device.manufacturerData)) new_device.capabilities.push('measure_pressure');
                 if (fn.isHumiditySupported(new_device.data.dataformat, device.manufacturerData)) new_device.capabilities.push('measure_humidity');
-                    
-                if (device.manufacturerData[2] == 5) {
+
+                if (new_device.data.dataformat == 3) {
+                    new_device.capabilities.push('measure_battery');
+                    new_device.capabilities.push('acceleration');
+                }
+                if (new_device.data.dataformat == 5) {
+                    new_device.capabilities.push('measure_battery');
+                    new_device.capabilities.push('acceleration');
                     new_device.capabilities.push('alarm_motion');
                     new_device.capabilities.push('alarm_battery');
                     new_device.capabilities.push('button.resetbattery');
+                }
+                if (new_device.data.dataformat == 6) {
+                    new_device.capabilities.push("measure_co2");
+                    new_device.capabilities.push("measure_pm25");
+                    new_device.capabilities.push("measure_nox_index");
+                    new_device.capabilities.push("measure_tvoc_index");
+                    new_device.capabilities.push("measure_aqi");
+                    new_device.capabilities.push("measure_luminance");
+                }
+                if (new_device.data.dataformat == 225) {
+                    new_device.capabilities.push("measure_co2");
+                    new_device.capabilities.push("measure_pm1");
+                    new_device.capabilities.push("measure_pm25");
+                    new_device.capabilities.push("measure_pm10");
+                    new_device.capabilities.push("measure_pm4");
+                    new_device.capabilities.push("measure_nox_index");
+                    new_device.capabilities.push("measure_tvoc_index");
+                    new_device.capabilities.push("measure_aqi");
+                    new_device.capabilities.push("measure_luminance");
                 }
                 devices.push(new_device);
             });
         }
         catch (error) {
-                console.log("Error when searching for ruuvi devices");
-                console.log(error);
+            console.log("Error when searching for ruuvi devices");
+            console.log(error);
         }
 
         return devices;
@@ -112,7 +135,7 @@ class RuuviTag extends Homey.Driver {
 
             //sending bleAdv to ruuviTag
             for (const ruuvitag of this.ruuvitags) {
-                let ruuvitagData = ruuvitag.getData() ;
+                let ruuvitagData = ruuvitag.getData();
                 ruuvitag.emit('updateTag', foundDevices.find(bleAdv => bleAdv.uuid == ruuvitagData.uuid));
             };
 
@@ -123,10 +146,10 @@ class RuuviTag extends Homey.Driver {
     async refreshDevices() {
         //listing all Ruuvitag
         this.ruuvitags = this.getDevices();
-        if(this.ruuvitags.length == 0) this.polling = false ;
+        if (this.ruuvitags.length == 0) this.polling = false;
         else {
-            if(!this.polling) {
-                this.polling = true ;
+            if (!this.polling) {
+                this.polling = true;
                 this.emit('poll');
             }
         }
@@ -134,4 +157,4 @@ class RuuviTag extends Homey.Driver {
 
 }
 
-module.exports = RuuviTag ;
+module.exports = RuuviTag;

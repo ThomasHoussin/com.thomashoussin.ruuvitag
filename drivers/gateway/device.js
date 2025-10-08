@@ -10,60 +10,60 @@ class MyDevice extends Device {
         return new Promise(resolve => this.homey.setTimeout(resolve, 1000 * s));
     }
 
-  /**
-   * onInit is called when the device is initialized.
-   */
-  async onInit() {
-      this.log('MyDevice has been initialized');
-    
-      // avoid all pooling at the same time
-      await new Promise(resolve => setTimeout(resolve, Math.random() * 10000));
+    /**
+     * onInit is called when the device is initialized.
+     */
+    async onInit() {
+        this.log('MyDevice has been initialized');
 
-      //polling BLE
-      this.polling = true;      
-      this.addListener('poll', this.pollDevice);
-      
-      // Initiating device polling
-      this.emit('poll');
+        // avoid all pooling at the same time
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 10000));
+
+        //polling BLE
+        this.polling = true;
+        this.addListener('poll', this.pollDevice);
+
+        // Initiating device polling
+        this.emit('poll');
 
     }
 
-  /**
-   * onAdded is called when the user adds the device, called just after pairing.
-   */
-  async onAdded() {
-      this.log('MyDevice has been added');
-      // Refreshing devices list
-      this.driver.emit('refreshDevices');
-  }
+    /**
+     * onAdded is called when the user adds the device, called just after pairing.
+     */
+    async onAdded() {
+        this.log('MyDevice has been added');
+        // Refreshing devices list
+        this.driver.emit('refreshDevices');
+    }
 
-  /**
-   * onSettings is called when the user updates the device's settings.
-   * @param {object} event the onSettings event data
-   * @param {object} event.oldSettings The old settings object
-   * @param {object} event.newSettings The new settings object
-   * @param {string[]} event.changedKeys An array of keys changed since the previous version
-   * @returns {Promise<string|void>} return a custom message that will be displayed
-   */
-  async onSettings({ oldSettings, newSettings, changedKeys }) {
-    this.log('MyDevice settings where changed');
-  }
+    /**
+     * onSettings is called when the user updates the device's settings.
+     * @param {object} event the onSettings event data
+     * @param {object} event.oldSettings The old settings object
+     * @param {object} event.newSettings The new settings object
+     * @param {string[]} event.changedKeys An array of keys changed since the previous version
+     * @returns {Promise<string|void>} return a custom message that will be displayed
+     */
+    async onSettings({ oldSettings, newSettings, changedKeys }) {
+        this.log('MyDevice settings where changed');
+    }
 
-  /**
-   * onRenamed is called when the user updates the device's name.
-   * This method can be used this to synchronise the name to the device.
-   * @param {string} name The new name
-   */
-  async onRenamed(name) {
-    this.log('MyDevice was renamed');
-  }
+    /**
+     * onRenamed is called when the user updates the device's name.
+     * This method can be used this to synchronise the name to the device.
+     * @param {string} name The new name
+     */
+    async onRenamed(name) {
+        this.log('MyDevice was renamed');
+    }
 
-  /**
-   * onDeleted is called when the user deleted the device.
-   */
-  async onDeleted() {
-      this.log('MyDevice has been deleted');
-      this.polling = false;
+    /**
+     * onDeleted is called when the user deleted the device.
+     */
+    async onDeleted() {
+        this.log('MyDevice has been deleted');
+        this.polling = false;
     }
 
     onDiscoveryResult(discoveryResult) {
@@ -118,7 +118,7 @@ class MyDevice extends Device {
         let settings = this.getSettings();
         if (!data) {
             console.log(`No data when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
-            return ;
+            return;
         }
         if (!data?.timestamp) {
             console.log(`No timestamp in data when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
@@ -141,7 +141,7 @@ class MyDevice extends Device {
         }
 
         let buffer = Buffer.from(data.data.substring(10), 'hex');
-        let dataformat = this.getData().dataformat ;
+        let dataformat = this.getData().dataformat;
 
         fn.validateDataFormat(dataformat, buffer);
 
@@ -152,8 +152,17 @@ class MyDevice extends Device {
         this.setCapabilityValue('measure_temperature', fn.readTemperature(dataformat, buffer)).catch(this.error);
         if (this.hasCapability('measure_pressure')) this.setCapabilityValue('measure_pressure', fn.readPressure(dataformat, buffer)).catch(this.error);
         if (this.hasCapability('measure_humidity')) this.setCapabilityValue('measure_humidity', fn.readHumidity(dataformat, buffer)).catch(this.error);
-        this.setCapabilityValue('measure_battery', fn.estimateBattery(fn.readBattery(dataformat, buffer), settings)).catch(this.error);
-        this.setCapabilityValue('acceleration', fn.computeAcceleration(fn.readAccelerationX(dataformat, buffer), fn.readAccelerationY(dataformat, buffer), fn.readAccelerationZ(dataformat, buffer)) / 1000).catch(this.error);
+        if (this.hasCapability('measure_battery')) this.setCapabilityValue('measure_battery', fn.estimateBattery(fn.readBattery(dataformat, buffer), settings)).catch(this.error);
+        if (this.hasCapability('acceleration')) this.setCapabilityValue('acceleration', fn.computeAcceleration(fn.readAccelerationX(dataformat, buffer), fn.readAccelerationY(dataformat, buffer), fn.readAccelerationZ(dataformat, buffer)) / 1000).catch(this.error);
+        if (this.hasCapability('measure_co2')) this.setCapabilityValue('measure_co2', fn.readCo2(dataformat, buffer)).catch(this.error);
+        if (this.hasCapability('measure_pm25')) this.setCapabilityValue('measure_pm25', fn.readPm25(dataformat, buffer)).catch(this.error);
+        //if (this.hasCapability('measure_pm1')) this.setCapabilityValue('measure_pm1', fn.readPm1(dataformat, buffer)).catch(this.error);
+        //if (this.hasCapability('measure_pm10')) this.setCapabilityValue('measure_pm10', fn.readPm10(dataformat, buffer)).catch(this.error);
+        //if (this.hasCapability('measure_pm4')) this.setCapabilityValue('measure_pm4', fn.readPm4(dataformat, buffer)).catch(this.error);
+        if (this.hasCapability('measure_nox_index')) this.setCapabilityValue('measure_nox_index', fn.readNoxIndex(dataformat, buffer)).catch(this.error);
+        if (this.hasCapability('measure_tvoc_index')) this.setCapabilityValue('measure_tvoc_index', fn.readTvocIndex(dataformat, buffer)).catch(this.error);
+        //if (this.hasCapability('measure_aqi')) this.setCapabilityValue('measure_aqi', fn.readAqi(dataformat, buffer)).catch(this.error);
+        if (this.hasCapability('measure_luminance')) this.setCapabilityValue('measure_luminance', fn.readLuminance(dataformat, buffer)).catch(this.error);
 
         if (this.hasCapability('alarm_motion') && settings.motiondetection) {
             let last_movement_counter = this.getStoreValue('movement_counter');

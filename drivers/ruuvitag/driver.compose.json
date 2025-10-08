@@ -8,14 +8,23 @@
   "connectivity": [ "ble" ],
   "capabilities": [
     "measure_battery",
+    "alarm_battery",
+    "button.resetbattery",
     "measure_humidity",
     "measure_pressure",
     "measure_temperature",
     "measure_rssi",
     "acceleration",
     "onoff",
-    "alarm_battery",
-    "button.resetbattery"
+    "measure_co2",
+    "measure_pm1",
+    "measure_pm25",
+    "measure_pm4",
+    "measure_pm10",
+    "measure_nox_index",
+    "measure_tvoc_index",
+    "measure_aqi",
+    "measure_luminance"
   ],
   "capabilitiesOptions": {
     "button.resetbattery": {
