@@ -1,7 +1,5 @@
-'use strict';
-
-const fn = require('../../lib/function.js');
-const Homey = require('homey');
+import * as fn from '../../lib/function.mjs';
+import Homey from 'homey';
 
 class Tag extends Homey.Device {
     /**
@@ -217,4 +215,4 @@ class Tag extends Homey.Device {
     }
 }
 
-module.exports = Tag;
+export default Tag;

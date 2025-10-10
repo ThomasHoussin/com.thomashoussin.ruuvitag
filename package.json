@@ -1,11 +1,12 @@
 {
   "name": "com.thomashoussin.ruuvitag",
   "version": "0.0.1",
-  "main": "app.js",
+  "type": "module",
+  "main": "app.mjs",
   "devDependencies": {
     "homey": "^3.7.12"
   },
   "dependencies": {
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^3.3.2"
   }
 }

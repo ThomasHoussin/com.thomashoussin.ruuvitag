@@ -1,10 +1,8 @@
-'use strict';
+import * as fn from '../../lib/function.mjs';
+import fetch from 'node-fetch';
+import Homey from 'homey';
 
-const fn = require('../../lib/function.js');
-const fetch = require('node-fetch');
-const { Device } = require('homey');
-
-class MyDevice extends Device {
+class MyDevice extends Homey.Device {
 
     async delay(s) {
         return new Promise(resolve => this.homey.setTimeout(resolve, 1000 * s));
@@ -94,12 +92,10 @@ class MyDevice extends Device {
             const hostname = data.hostname.endsWith('.local') ? data.hostname : `${data.hostname}.local`;
             const validationUrl = `http://${hostname}/history?decode=false`;
 
-            const requestHeaders = new fetch.Headers({
-                "Authorization": `Bearer ${token}`
-            });
-
             fetch(validationUrl, {
-                headers: requestHeaders
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             })
                 .then(fn.checkResponseStatus)
                 .then(result => result.json())
@@ -233,4 +229,4 @@ class MyDevice extends Device {
     }
 }
 
-module.exports = MyDevice;
+export default MyDevice;

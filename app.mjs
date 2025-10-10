@@ -1,6 +1,4 @@
-'use strict';
-
-const Homey = require('homey');
+import Homey from 'homey';
 
 class MyApp extends Homey.App {
   /**
@@ -19,5 +17,5 @@ class MyApp extends Homey.App {
 
 }
 
-module.exports = MyApp;
+export default MyApp;
 

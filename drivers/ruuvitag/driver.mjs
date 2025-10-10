@@ -1,7 +1,5 @@
-'use strict';
-
-const fn = require('../../lib/function.js');
-const Homey = require('homey');
+import * as fn from '../../lib/function.mjs';
+import Homey from 'homey';
 
 class RuuviTag extends Homey.Driver {
 
@@ -165,4 +163,4 @@ class RuuviTag extends Homey.Driver {
 
 }
 
-module.exports = RuuviTag;
+export default RuuviTag;

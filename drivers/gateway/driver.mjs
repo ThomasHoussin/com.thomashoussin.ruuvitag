@@ -1,10 +1,8 @@
-'use strict';
+import * as fn from '../../lib/function.mjs';
+import fetch from 'node-fetch';
+import Homey from 'homey';
 
-const fn = require('../../lib/function.js');
-const fetch = require('node-fetch');
-const { Driver } = require('homey');
-
-class MyDriver extends Driver {
+class MyDriver extends Homey.Driver {
 
     /**
      * onInit is called when the driver is initialized.
@@ -34,14 +32,12 @@ class MyDriver extends Driver {
             const hostname = discoveryResult.host.endsWith('.local') ? discoveryResult.host : `${discoveryResult.host}.local`;
             const validationUrl = `http://${hostname}/history?decode=false`;
 
-            const requestHeaders = new fetch.Headers({
-                "Authorization": `Bearer ${token}`
-            });
-
             console.log(validationUrl);
 
             return fetch(validationUrl, {
-                headers: requestHeaders
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             })
                 .then(fn.checkResponseStatus)
                 .then(result => result.json())
@@ -117,5 +113,5 @@ class MyDriver extends Driver {
     }
 }
 
-module.exports = MyDriver;
+export default MyDriver;
 
