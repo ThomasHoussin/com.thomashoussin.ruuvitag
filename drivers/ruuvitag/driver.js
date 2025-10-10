@@ -59,7 +59,7 @@ class RuuviTag extends Homey.Driver {
                         id: device.id,
                         uuid: device.uuid,
                         address: device.address,
-                        dataformat: device.manufacturerData[2]
+                        dataformat: fn.readFormat(device.manufacturerData)
                     },
                     capabilities: [
                         'measure_temperature',
@@ -89,7 +89,6 @@ class RuuviTag extends Homey.Driver {
                     new_device.capabilities.push("measure_nox_index");
                     new_device.capabilities.push("measure_tvoc_index");
                     new_device.capabilities.push("measure_aqi");
-                    new_device.capabilities.push("measure_luminance");
                 }
                 if (new_device.data.dataformat == 225) {
                     new_device.capabilities.push("measure_co2");
@@ -100,9 +99,18 @@ class RuuviTag extends Homey.Driver {
                     new_device.capabilities.push("measure_nox_index");
                     new_device.capabilities.push("measure_tvoc_index");
                     new_device.capabilities.push("measure_aqi");
-                    new_device.capabilities.push("measure_luminance");
                 }
-                devices.push(new_device);
+
+                // Filtre: privilégier format 225 sur format 6 pour un même device
+                const existingIndex = devices.findIndex(d => d.data.id === new_device.data.id);
+                if (existingIndex === -1) {
+                    // Device pas encore dans la liste, on l'ajoute
+                    devices.push(new_device);
+                } else if (devices[existingIndex].data.dataformat === 6 && new_device.data.dataformat === 225) {
+                    // Device existe en format 6, on le remplace par format 225
+                    devices[existingIndex] = new_device;
+                }
+                // Sinon on ne fait rien (garde l'existant)
             });
         }
         catch (error) {

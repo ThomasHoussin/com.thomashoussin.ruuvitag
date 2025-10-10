@@ -140,7 +140,7 @@ class MyDevice extends Device {
             return;
         }
 
-        let buffer = Buffer.from(data.data.substring(10), 'hex');
+        let buffer = data.ble_phy === "2M" ? Buffer.from(data.data.substring(4), 'hex') : Buffer.from(data.data.substring(10), 'hex');
         let dataformat = this.getData().dataformat;
 
         fn.validateDataFormat(dataformat, buffer);
@@ -156,13 +156,12 @@ class MyDevice extends Device {
         if (this.hasCapability('acceleration')) this.setCapabilityValue('acceleration', fn.computeAcceleration(fn.readAccelerationX(dataformat, buffer), fn.readAccelerationY(dataformat, buffer), fn.readAccelerationZ(dataformat, buffer)) / 1000).catch(this.error);
         if (this.hasCapability('measure_co2')) this.setCapabilityValue('measure_co2', fn.readCo2(dataformat, buffer)).catch(this.error);
         if (this.hasCapability('measure_pm25')) this.setCapabilityValue('measure_pm25', fn.readPm25(dataformat, buffer)).catch(this.error);
-        //if (this.hasCapability('measure_pm1')) this.setCapabilityValue('measure_pm1', fn.readPm1(dataformat, buffer)).catch(this.error);
-        //if (this.hasCapability('measure_pm10')) this.setCapabilityValue('measure_pm10', fn.readPm10(dataformat, buffer)).catch(this.error);
-        //if (this.hasCapability('measure_pm4')) this.setCapabilityValue('measure_pm4', fn.readPm4(dataformat, buffer)).catch(this.error);
+        if (this.hasCapability('measure_pm1')) this.setCapabilityValue('measure_pm1', fn.readPm1(dataformat, buffer)).catch(this.error);
+        if (this.hasCapability('measure_pm10')) this.setCapabilityValue('measure_pm10', fn.readPm10(dataformat, buffer)).catch(this.error);
+        if (this.hasCapability('measure_pm4')) this.setCapabilityValue('measure_pm4', fn.readPm4(dataformat, buffer)).catch(this.error);
         if (this.hasCapability('measure_nox_index')) this.setCapabilityValue('measure_nox_index', fn.readNoxIndex(dataformat, buffer)).catch(this.error);
         if (this.hasCapability('measure_tvoc_index')) this.setCapabilityValue('measure_tvoc_index', fn.readTvocIndex(dataformat, buffer)).catch(this.error);
-        //if (this.hasCapability('measure_aqi')) this.setCapabilityValue('measure_aqi', fn.readAqi(dataformat, buffer)).catch(this.error);
-        if (this.hasCapability('measure_luminance')) this.setCapabilityValue('measure_luminance', fn.readLuminance(dataformat, buffer)).catch(this.error);
+        if (this.hasCapability('measure_aqi')) this.setCapabilityValue('measure_aqi', fn.calc_aqi(fn.readPm25(dataformat, buffer), fn.readCo2(dataformat, buffer))).catch(this.error);
 
         if (this.hasCapability('alarm_motion') && settings.motiondetection) {
             let last_movement_counter = this.getStoreValue('movement_counter');

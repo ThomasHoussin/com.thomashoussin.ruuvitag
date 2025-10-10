@@ -46,7 +46,7 @@ class MyDriver extends Driver {
                 .then(fn.checkResponseStatus)
                 .then(result => result.json())
                 .then(json => Object.keys(json.data.tags).map(id => {
-                    let buffer = Buffer.from(json.data.tags[id].data.substring(10), 'hex');
+                    let buffer = json.data.tags[id].ble_phy === "2M" ? Buffer.from(json.data.tags[id].data.substring(4), 'hex') : Buffer.from(json.data.tags[id].data.substring(10), 'hex');
                     let new_device = {
                         name: id,
                         data: {
@@ -86,7 +86,6 @@ class MyDriver extends Driver {
                         new_device.capabilities.push("measure_nox_index");
                         new_device.capabilities.push("measure_tvoc_index");
                         new_device.capabilities.push("measure_aqi");
-                        new_device.capabilities.push("measure_luminance");
                     }
                     if (new_device.data.dataformat == 225) {
                         new_device.capabilities.push("measure_co2");
@@ -97,7 +96,6 @@ class MyDriver extends Driver {
                         new_device.capabilities.push("measure_nox_index");
                         new_device.capabilities.push("measure_tvoc_index");
                         new_device.capabilities.push("measure_aqi");
-                        new_device.capabilities.push("measure_luminance");
                     }
                     return new_device;
                 }))

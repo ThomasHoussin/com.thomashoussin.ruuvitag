@@ -6,7 +6,7 @@ Adds support for RuuviTag Bluetooth Sensor
 RuuviTag is an advanced open-source sensor beacon platform designed to fulfill the needs of business customers, developers, makers, students, and can even be used in your home and as part of your personal endeavours. See https://ruuvi.com/ fore more information. 
 
 ## RuuviTag driver
-This apps allows integration of RuuviTag and Ruuvitag Pro (RAWv1 and RAWv2 format) in Homey, allowing to monitor :
+This apps allows integration of RuuviTag, Ruuvitag Pro (RAWv1 and RAWv2 format) and Ruuvi Air (format 6 and E1) in Homey, allowing to monitor :
 - Temperature
 - Humidity
 - Pressure
@@ -14,6 +14,7 @@ This apps allows integration of RuuviTag and Ruuvitag Pro (RAWv1 and RAWv2 forma
 - Battery
 - RSSI
 - Movement (RAWv2 only)
+- Air quality (Ruuvi Air only): CO2, PM1, PM2.5, PM4, PM10, NOx index, TVOC index, AQI
 - Entering/leaving range : it can be used as a BLE beacon, triggering an event when the device enters or leaves the range. The number of attempts scan can be configured per device in device settings.
 
 Scan duration (how long homey listens for BLE advertisment) and polling interval (how long between two scans) can be configured in app settings.
@@ -42,6 +43,8 @@ Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+###  v0.4.0
+    - Add support for Ruuvi Air (formats 6 and E1)
 ###  v0.3.5
     - Detects if hostname ends with .local in gateway autodiscovery
 ###  v0.3.4

@@ -113,8 +113,7 @@
         "measure_pm10",
         "measure_nox_index",
         "measure_tvoc_index",
-        "measure_aqi",
-        "measure_luminance"
+        "measure_aqi"
       ],
       "capabilitiesOptions": {
         "button.resetbattery": {
@@ -264,87 +263,6 @@
       "id": "gateway"
     },
     {
-      "id": "ruuviair",
-      "name": {
-        "en": "Ruuvi Air"
-      },
-      "class": "sensor",
-      "platforms": [
-        "local"
-      ],
-      "connectivity": [
-        "ble"
-      ],
-      "capabilities": [
-        "measure_co2",
-        "measure_humidity",
-        "measure_pressure",
-        "measure_temperature",
-        "measure_rssi",
-        "measure_pm1",
-        "measure_pm25",
-        "measure_pm4",
-        "measure_pm10",
-        "measure_nox",
-        "measure_tvoc",
-        "measure_aqi",
-        "onoff"
-      ],
-      "images": {
-        "large": "./drivers/ruuviair/assets/images/large.png",
-        "small": "./drivers/ruuviair/assets/images/small.png"
-      },
-      "energy": {
-        "batteries": [
-          "CR2477"
-        ]
-      },
-      "settings": [
-        {
-          "type": "group",
-          "label": {
-            "en": "Presence settings"
-          },
-          "children": [
-            {
-              "id": "TTL",
-              "type": "number",
-              "value": 10,
-              "min": 1,
-              "max": 60,
-              "label": {
-                "en": "Number of attempts before marking as out"
-              }
-            },
-            {
-              "id": "enable_notif",
-              "type": "checkbox",
-              "value": true,
-              "label": {
-                "en": "Show notifications when entering/leaving range"
-              }
-            }
-          ]
-        }
-      ],
-      "pair": [
-        {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          },
-          "options": {
-            "singular": false
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
-        }
-      ]
-    },
-    {
       "id": "ruuvitag",
       "name": {
         "en": "RuuviTag"
@@ -373,8 +291,7 @@
         "measure_pm10",
         "measure_nox_index",
         "measure_tvoc_index",
-        "measure_aqi",
-        "measure_luminance"
+        "measure_aqi"
       ],
       "capabilitiesOptions": {
         "button.resetbattery": {

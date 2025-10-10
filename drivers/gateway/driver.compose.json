@@ -23,8 +23,7 @@
     "measure_pm10",
     "measure_nox_index",
     "measure_tvoc_index",
-    "measure_aqi",
-    "measure_luminance"
+    "measure_aqi"
   ],
   "capabilitiesOptions": {
     "button.resetbattery": {
