@@ -2,13 +2,13 @@ import * as fn from '../../lib/function.mjs';
 import fetch from 'node-fetch';
 import Homey from 'homey';
 
-class MyDriver extends Homey.Driver {
+class GatewayDriver extends Homey.Driver {
 
     /**
      * onInit is called when the driver is initialized.
      */
     async onInit() {
-        this.log('MyDriver has been initialized');
+        this.log('GatewayDriver has been initialized');
 
         // Registering trigger
         this.RuuviTagEnteredRange = this.homey.flow.getDeviceTriggerCard('ruuvitag_entered_range');
@@ -68,6 +68,9 @@ class MyDriver extends Homey.Driver {
                     if (new_device.data.dataformat == 3) {
                         new_device.capabilities.push('measure_battery');
                         new_device.capabilities.push('acceleration');
+                        new_device.energy = {
+                            batteries: ['CR2477']
+                        };
                     }
                     if (new_device.data.dataformat == 5) {
                         new_device.capabilities.push('measure_battery');
@@ -75,6 +78,9 @@ class MyDriver extends Homey.Driver {
                         new_device.capabilities.push('alarm_motion');
                         new_device.capabilities.push('alarm_battery');
                         new_device.capabilities.push('button.resetbattery');
+                        new_device.energy = {
+                            batteries: ['CR2477']
+                        };
                     }
                     if (new_device.data.dataformat == 6) {
                         new_device.capabilities.push("measure_co2");
@@ -113,5 +119,5 @@ class MyDriver extends Homey.Driver {
     }
 }
 
-export default MyDriver;
+export default GatewayDriver;
 

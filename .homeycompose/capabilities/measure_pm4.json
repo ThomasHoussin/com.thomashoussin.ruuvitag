@@ -5,7 +5,7 @@
   },
   "getable": true,
   "setable": false,
-  "icon": "/assets/acceleration.svg",
+  "icon": "/assets/measure_PM4.svg",
   "units": {
     "en": "μg/m³"
   },

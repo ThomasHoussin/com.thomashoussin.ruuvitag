@@ -1,7 +1,7 @@
 {
   "id": "ruuvitag",
   "name": {
-    "en": "RuuviTag"
+    "en": "RuuviTag / Ruuvi Air"
   },
   "class": "sensor",
   "platforms": [ "local"],
@@ -39,9 +39,6 @@
   "images": {
     "large": "./drivers/ruuvitag/assets/images/large.png",
     "small": "./drivers/ruuvitag/assets/images/small.png"
-  },
-  "energy": {
-    "batteries": [ "CR2477" ]
   },
   "settings": [
     {

@@ -92,11 +92,6 @@
         "en": "Ruuvi Gateway"
       },
       "class": "sensor",
-      "energy": {
-        "batteries": [
-          "CR2477"
-        ]
-      },
       "capabilities": [
         "measure_battery",
         "alarm_battery",
@@ -266,7 +261,7 @@
     {
       "id": "ruuvitag",
       "name": {
-        "en": "RuuviTag"
+        "en": "RuuviTag / Ruuvi Air"
       },
       "class": "sensor",
       "platforms": [
@@ -308,11 +303,6 @@
       "images": {
         "large": "./drivers/ruuvitag/assets/images/large.png",
         "small": "./drivers/ruuvitag/assets/images/small.png"
-      },
-      "energy": {
-        "batteries": [
-          "CR2477"
-        ]
       },
       "settings": [
         {
@@ -431,7 +421,7 @@
       },
       "getable": true,
       "setable": false,
-      "icon": "/assets/acceleration.svg",
+      "icon": "/assets/measure_nox.svg",
       "decimals": 0
     },
     "measure_pm4": {
@@ -441,7 +431,7 @@
       },
       "getable": true,
       "setable": false,
-      "icon": "/assets/acceleration.svg",
+      "icon": "/assets/measure_PM4.svg",
       "units": {
         "en": "μg/m³"
       },

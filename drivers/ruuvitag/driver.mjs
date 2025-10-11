@@ -73,6 +73,9 @@ class RuuviTag extends Homey.Driver {
                 if (new_device.data.dataformat == 3) {
                     new_device.capabilities.push('measure_battery');
                     new_device.capabilities.push('acceleration');
+                    new_device.energy = {
+                        batteries: ['CR2477']
+                    };
                 }
                 if (new_device.data.dataformat == 5) {
                     new_device.capabilities.push('measure_battery');
@@ -80,6 +83,9 @@ class RuuviTag extends Homey.Driver {
                     new_device.capabilities.push('alarm_motion');
                     new_device.capabilities.push('alarm_battery');
                     new_device.capabilities.push('button.resetbattery');
+                    new_device.energy = {
+                        batteries: ['CR2477']
+                    };
                 }
                 if (new_device.data.dataformat == 6) {
                     new_device.capabilities.push("measure_co2");

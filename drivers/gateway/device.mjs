@@ -2,7 +2,7 @@ import * as fn from '../../lib/function.mjs';
 import fetch from 'node-fetch';
 import Homey from 'homey';
 
-class MyDevice extends Homey.Device {
+class GatewayDevice extends Homey.Device {
 
     async delay(s) {
         return new Promise(resolve => this.homey.setTimeout(resolve, 1000 * s));
@@ -12,7 +12,18 @@ class MyDevice extends Homey.Device {
      * onInit is called when the device is initialized.
      */
     async onInit() {
-        this.log('MyDevice has been initialized');
+        this.log('GatewayDevice has been initialized');
+
+        // Set energy information for battery-powered tags
+        if (this.getData().dataformat == 5 || this.getData().dataformat == 3) {
+            this.log('Setting energy information for battery-powered device.');
+            try {
+                await this.setEnergy({ batteries: ['CR2477'] });
+                this.log('Successfully set energy information.');
+            } catch (e) {
+                this.error('Failed to set energy information:', e);
+            }
+        }
 
         // avoid all pooling at the same time
         await new Promise(resolve => setTimeout(resolve, Math.random() * 10000));
@@ -23,14 +34,13 @@ class MyDevice extends Homey.Device {
 
         // Initiating device polling
         this.emit('poll');
-
     }
 
     /**
      * onAdded is called when the user adds the device, called just after pairing.
      */
     async onAdded() {
-        this.log('MyDevice has been added');
+        this.log('GatewayDevice has been added');
         // Refreshing devices list
         this.driver.emit('refreshDevices');
     }
@@ -44,7 +54,7 @@ class MyDevice extends Homey.Device {
      * @returns {Promise<string|void>} return a custom message that will be displayed
      */
     async onSettings({ oldSettings, newSettings, changedKeys }) {
-        this.log('MyDevice settings where changed');
+        this.log('GatewayDevice settings where changed');
     }
 
     /**
@@ -53,14 +63,14 @@ class MyDevice extends Homey.Device {
      * @param {string} name The new name
      */
     async onRenamed(name) {
-        this.log('MyDevice was renamed');
+        this.log('GatewayDevice was renamed');
     }
 
     /**
      * onDeleted is called when the user deleted the device.
      */
     async onDeleted() {
-        this.log('MyDevice has been deleted');
+        this.log('GatewayDevice has been deleted');
         this.polling = false;
     }
 
@@ -229,4 +239,4 @@ class MyDevice extends Homey.Device {
     }
 }
 
-export default MyDevice;
+export default GatewayDevice;

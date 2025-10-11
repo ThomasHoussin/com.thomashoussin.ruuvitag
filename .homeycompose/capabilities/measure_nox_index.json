@@ -5,6 +5,6 @@
   },
   "getable": true,
   "setable": false,
-  "icon": "/assets/acceleration.svg",
+  "icon": "/assets/measure_nox.svg",
   "decimals": 0
 }
