@@ -6,5 +6,6 @@
   "getable": true,
   "setable": false,
   "icon": "/assets/measure_nox.svg",
-  "decimals": 0
+  "decimals": 0,
+  "insights": true
 }

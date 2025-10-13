@@ -9,5 +9,6 @@
   "units": {
     "en": "μg/m³"
   },
-  "decimals": 1
+  "decimals": 1,
+  "insights": true
 }
