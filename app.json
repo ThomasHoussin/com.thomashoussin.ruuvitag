@@ -122,6 +122,11 @@
           }
         }
       },
+      "energy": {
+        "batteries": [
+          "CR2477"
+        ]
+      },
       "platforms": [
         "local"
       ],
@@ -299,6 +304,11 @@
             "en": "This will reset alarm battery"
           }
         }
+      },
+      "energy": {
+        "batteries": [
+          "CR2477"
+        ]
       },
       "images": {
         "large": "./drivers/ruuvitag/assets/images/large.png",

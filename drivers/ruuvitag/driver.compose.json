@@ -36,6 +36,9 @@
       }
     }
   },
+  "energy": {
+      "batteries": ["CR2477"]
+  },
   "images": {
     "large": "./drivers/ruuvitag/assets/images/large.png",
     "small": "./drivers/ruuvitag/assets/images/small.png"

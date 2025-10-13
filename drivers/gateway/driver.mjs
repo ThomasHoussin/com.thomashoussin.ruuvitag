@@ -68,9 +68,6 @@ class GatewayDriver extends Homey.Driver {
                     if (new_device.data.dataformat == 3) {
                         new_device.capabilities.push('measure_battery');
                         new_device.capabilities.push('acceleration');
-                        new_device.energy = {
-                            batteries: ['CR2477']
-                        };
                     }
                     if (new_device.data.dataformat == 5) {
                         new_device.capabilities.push('measure_battery');
@@ -78,9 +75,6 @@ class GatewayDriver extends Homey.Driver {
                         new_device.capabilities.push('alarm_motion');
                         new_device.capabilities.push('alarm_battery');
                         new_device.capabilities.push('button.resetbattery');
-                        new_device.energy = {
-                            batteries: ['CR2477']
-                        };
                     }
                     if (new_device.data.dataformat == 6) {
                         new_device.capabilities.push("measure_co2");
@@ -88,6 +82,10 @@ class GatewayDriver extends Homey.Driver {
                         new_device.capabilities.push("measure_nox_index");
                         new_device.capabilities.push("measure_tvoc_index");
                         new_device.capabilities.push("measure_aqi");
+                        // removing the battery property
+                        // mandatory in driver.compose.json but in this case Ruuvi Air does not have batteries
+                        new_device.energy = {
+                        };
                     }
                     if (new_device.data.dataformat == 225) {
                         new_device.capabilities.push("measure_co2");
@@ -98,6 +96,10 @@ class GatewayDriver extends Homey.Driver {
                         new_device.capabilities.push("measure_nox_index");
                         new_device.capabilities.push("measure_tvoc_index");
                         new_device.capabilities.push("measure_aqi");
+                        //removing the battery property
+                        // mandatory in driver.compose.json but in this case Ruuvi Air does not have batteries
+                        new_device.energy = {
+                        };
                     }
                     return new_device;
                 }))

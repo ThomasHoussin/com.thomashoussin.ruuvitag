@@ -14,17 +14,6 @@ class GatewayDevice extends Homey.Device {
     async onInit() {
         this.log('GatewayDevice has been initialized');
 
-        // Set energy information for battery-powered tags
-        if (this.getData().dataformat == 5 || this.getData().dataformat == 3) {
-            this.log('Setting energy information for battery-powered device.');
-            try {
-                await this.setEnergy({ batteries: ['CR2477'] });
-                this.log('Successfully set energy information.');
-            } catch (e) {
-                this.error('Failed to set energy information:', e);
-            }
-        }
-
         // avoid all pooling at the same time
         await new Promise(resolve => setTimeout(resolve, Math.random() * 10000));
 

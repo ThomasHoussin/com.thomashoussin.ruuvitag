@@ -26,17 +26,6 @@ class Tag extends Homey.Device {
             });
         }
 
-        // Set energy information for battery-powered tags
-        if (this.getData().dataformat == 5 || this.getData().dataformat == 3) {
-            this.log('Setting energy information for battery-powered device.');
-            try {
-                await this.setEnergy({ batteries: ['CR2477'] });
-                this.log('Successfully set energy information.');
-            } catch (e) {
-                this.error('Failed to set energy information:', e);
-            }
-        }
-
         this.addListener('updateTag', this.updateTag);
     }
 
