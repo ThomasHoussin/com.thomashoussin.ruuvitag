@@ -114,22 +114,20 @@ class Tag extends Homey.Device {
                         }
                     }
 
-                    //saving timestamp of measure
-                    this.setStoreValue('last_measure', Date.now());
-
                     //we try to detect a reset in sequence number
                     if (this.hasCapability('alarm_battery')) {
+                        let lastMeasureTimestamp = this.getStoreValue('last_measure') || 0;
                         let sequenceNumber = this.getStoreValue('sequence_counter');
                         let newSequenceNumber = fn.readSequenceNumber(dataformat, buffer);
                         this.setStoreValue('sequence_counter', newSequenceNumber);
 
-                        let elapsed = Date.now() - this.getStoreValue('last_measure');
+                        let elapsed = Date.now() - lastMeasureTimestamp;
                         let inc = (elapsed * 1.2) / 1285;
 
                         if (newSequenceNumber < sequenceNumber
                             //reset in sequence number. Is this expected ?
                             && sequenceNumber + inc < 65535) {
-                            //we use elapsed time to make a rough guess 
+                            //we use elapsed time to make a rough guess
 
                             //reset is probably an anomaly
                             //probably low bat warning
@@ -138,6 +136,9 @@ class Tag extends Homey.Device {
                             this.setCapabilityValue('alarm_battery', true).catch(this.error);
                         }
                     }
+
+                    //saving timestamp of measure (after using the previous value)
+                    this.setStoreValue('last_measure', Date.now());
                 }
 
             }
