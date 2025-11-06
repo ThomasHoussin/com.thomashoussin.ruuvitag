@@ -1,0 +1,181 @@
+name: Claude Issue Auto-Triage
+
+# This workflow automatically analyzes new issues and provides initial responses
+# It helps with:
+# - Identifying known issues and providing solutions
+# - Asking for clarification when needed
+# - Triaging bugs vs feature requests vs support questions
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  triage-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Issue Analysis
+        id: claude-triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            ISSUE TRIAGE TASK
+
+            A new issue has been opened on the RuuviTag Homey App repository:
+
+            **Issue Title**: ${{ github.event.issue.title }}
+            **Issue Number**: #${{ github.event.issue.number }}
+            **Issue URL**: ${{ github.event.issue.html_url }}
+            **Author**: @${{ github.event.issue.user.login }}
+
+            **Issue Body**:
+            ${{ github.event.issue.body }}
+
+            ---
+
+            YOUR TASK:
+
+            1. **Analyze the issue** using the information in CLAUDE.md, especially the "Common Issues and Solutions" section
+
+            2. **Categorize** the issue as one of:
+               - KNOWN_ISSUE: Matches a documented known issue in CLAUDE.md
+               - BUG_REPORT: New bug that needs investigation
+               - FEATURE_REQUEST: Enhancement or new functionality request
+               - SUPPORT_QUESTION: User needs help with configuration/usage
+               - NEEDS_INFO: Not enough information to determine the issue
+               - NOT_RELEVANT: Spam or off-topic
+
+            3. **Check for key information**:
+               - Ruuvi product (RuuviTag vs Ruuvi Air - IMPORTANT distinction!)
+               - Data format:
+                 * RuuviTag: Format 3 (RAWv1) or Format 5 (RAWv2)
+                 * Ruuvi Air: Format 6 or Format E1 (Extended)
+               - Driver type (BLE Direct or RuuviGateway)
+               - Homey firmware version
+               - App version
+               - Error messages or logs
+               - Steps to reproduce
+               - For BLE issues: distance from Homey, number of devices
+               - For Gateway issues: Gateway firmware version, network setup
+               - Battery level (RuuviTag only - Ruuvi Air is powered)
+
+            4. **Respond appropriately** using `gh issue comment`:
+
+               For KNOWN_ISSUE:
+               - Explain the issue clearly
+               - Reference the specific known issue from CLAUDE.md
+               - Provide the solution or workaround
+               - Mention which version fixed it (if applicable)
+               - Add label "known-issue" using `gh issue edit --add-label`
+               - If the issue is already fixed in latest version, suggest updating
+
+               For BUG_REPORT:
+               - Thank the user for reporting
+               - Confirm it's a valid bug
+               - Add label "bug" using `gh issue edit --add-label`
+               - Mention which driver is affected (BLE/Gateway)
+               - Ask if any critical information is missing
+
+               For FEATURE_REQUEST:
+               - Thank the user for the suggestion
+               - Confirm it's a valid feature request
+               - Ask for clarification on use case if needed
+               - Mention any technical considerations (e.g., format 5 only, BLE limitations)
+               - Add label "enhancement" using `gh issue edit --add-label`
+
+               For SUPPORT_QUESTION:
+               - Provide helpful guidance based on CLAUDE.md
+               - Reference documentation if available
+               - For common setup issues, guide through troubleshooting
+               - Add label "question" using `gh issue edit --add-label`
+
+               For NEEDS_INFO:
+               - Politely ask for the missing information
+               - Use a checklist format for what's needed:
+                 * RuuviTag model
+                 * Data format (check in Ruuvi Station app)
+                 * Driver type (BLE or Gateway)
+                 * Homey firmware version
+                 * App version
+                 * Error messages or logs (use: homey app log com.thomashoussin.ruuvitag)
+                 * Steps to reproduce
+                 * Additional context (distance, battery level, etc.)
+               - Add label "needs-info" using `gh issue edit --add-label`
+
+               For NOT_RELEVANT:
+               - Politely explain why it's not relevant
+               - Close the issue using `gh issue close --reason "not planned"`
+
+            5. **Be helpful and professional**:
+               - Use friendly, clear language (preferably in French for this project)
+               - Reference specific files/code when relevant (use [file:line](path#Lline) format)
+               - Provide actionable next steps
+               - For BLE issues, consider distance and interference factors
+               - For Gateway issues, check network connectivity and bearer token
+               - Don't make promises about fixes without maintainer confirmation
+
+            6. **Common troubleshooting guidance**:
+
+               BLE Driver Issues:
+               - Check if polling is running (refreshDevices event)
+               - Verify RuuviTag is in range and advertising
+               - Check if other BLE devices are interfering
+               - Confirm Homey BLE permission is granted
+
+               Gateway Driver Issues:
+               - Verify Gateway is accessible on network (.local hostname)
+               - Check bearer token is valid (may need re-pairing)
+               - Confirm Gateway firmware is up to date
+               - Test HTTP endpoint manually: http://{hostname}.local/history
+
+               Data Format Issues:
+               - Format 3: Basic sensors only
+               - Format 5: Adds motion detection and battery alerts
+               - 0xFFFF values mean sensor not available on this model
+
+               Presence Detection:
+               - Uses TTL mechanism with onoff capability
+               - Triggers: ruuvitag_entered_range, ruuvitag_exited_range
+
+            7. **Use these gh commands**:
+               ```bash
+               # To comment on the issue (use HEREDOC for multi-line)
+               gh issue comment ${{ github.event.issue.number }} --body "$(cat <<'EOF'
+               Your multi-line
+               message here
+               EOF
+               )"
+
+               # To add labels
+               gh issue edit ${{ github.event.issue.number }} --add-label "bug"
+               gh issue edit ${{ github.event.issue.number }} --add-label "enhancement"
+               gh issue edit ${{ github.event.issue.number }} --add-label "question"
+               gh issue edit ${{ github.event.issue.number }} --add-label "needs-info"
+               gh issue edit ${{ github.event.issue.number }} --add-label "known-issue"
+
+               # To close if not relevant
+               gh issue close ${{ github.event.issue.number }} --reason "not planned" --comment "Reason for closing"
+               ```
+
+            IMPORTANT:
+            - Read CLAUDE.md carefully for known issues and project context
+            - Be conservative: if unsure, ask for more information rather than making assumptions
+            - Don't claim issues are fixed unless you can verify in the codebase
+            - Use HEREDOC for multi-line comments to avoid quoting issues
+            - Prefer responding in French since this is a French-maintained project
+            - Consider both BLE and Gateway drivers when analyzing issues
+            - Remember this is an ESM project (import/export, not require)
+
+          # Restrict Claude to only use necessary tools
+          claude_args: '--allowed-tools "Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh issue close:*),Bash(gh issue view:*),Read,Grep,Glob"'

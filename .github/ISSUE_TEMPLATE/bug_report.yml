@@ -1,0 +1,130 @@
+name: Bug Report
+description: Report a bug or issue with the RuuviTag Homey App
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below to help us investigate.
+
+  - type: dropdown
+    id: driver
+    attributes:
+      label: Which driver is affected?
+      description: Select the driver where you're experiencing the issue
+      options:
+        - BLE Direct
+        - RuuviGateway (HTTP/LAN)
+        - Both drivers
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ruuvi-product
+    attributes:
+      label: Ruuvi Product
+      description: Which Ruuvi product are you using?
+      options:
+        - RuuviTag (compact environmental sensor)
+        - Ruuvi Air (air quality monitor)
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: data-format
+    attributes:
+      label: Data Format
+      description: Which data format is your device using? (Check in Ruuvi Station app)
+      options:
+        - Format 3 (RAWv1) - RuuviTag
+        - Format 5 (RAWv2) - RuuviTag
+        - Format 6 - Ruuvi Air
+        - Format E1 (Extended) - Ruuvi Air
+        - Not sure
+    validations:
+      required: false
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version
+      description: Which version of the RuuviTag Homey app are you using?
+      placeholder: "e.g., 0.4.0"
+    validations:
+      required: true
+
+  - type: input
+    id: homey-version
+    attributes:
+      label: Homey Firmware Version
+      description: Which version of Homey firmware are you running?
+      placeholder: "e.g., 12.3.0"
+    validations:
+      required: false
+
+  - type: input
+    id: gateway-version
+    attributes:
+      label: RuuviGateway Version (if applicable)
+      description: If using Gateway driver, which Gateway firmware version?
+      placeholder: "e.g., 2.5.0"
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear description of what the bug is
+      placeholder: Describe what's happening...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: What should happen instead...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Go to...
+        2. Click on...
+        3. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Messages or Logs
+      description: |
+        If you have any error messages or logs from Homey, please paste them here.
+        You can get logs by running: homey app log com.thomashoussin.ruuvitag
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: |
+        Any other information that might help us solve this issue:
+        - Number of devices
+        - Distance from Homey (for BLE issues)
+        - Network setup (for Gateway issues)
+        - Battery level (RuuviTag only - Ruuvi Air is powered)
+        - Firmware version (check in Ruuvi Station app)
+    validations:
+      required: false
