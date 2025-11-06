@@ -99,7 +99,7 @@ class Tag extends Homey.Device {
                     if (this.hasCapability('measure_pm4')) this.setCapabilityValue('measure_pm4', fn.readPm4(dataformat, buffer)).catch(this.error);
                     if (this.hasCapability('measure_nox_index')) this.setCapabilityValue('measure_nox_index', fn.readNoxIndex(dataformat, buffer)).catch(this.error);
                     if (this.hasCapability('measure_tvoc_index')) this.setCapabilityValue('measure_tvoc_index', fn.readTvocIndex(dataformat, buffer)).catch(this.error);
-                    if (this.hasCapability('measure_aqi')) this.setCapabilityValue('measure_aqi', fn.calc_aqi(fn.readPm25(dataformat, buffer), fn.readCo2(dataformat, buffer))).catch(this.error);
+                    if (this.hasCapability('measure_aqi') && (dataformat === 6 || dataformat === 225)) this.setCapabilityValue('measure_aqi', fn.calc_aqi(fn.readPm25(dataformat, buffer), fn.readCo2(dataformat, buffer))).catch(this.error);
 
                     if (this.hasCapability('alarm_motion') && settings.motiondetection) {
                         let last_movement_counter = this.getStoreValue('movement_counter');
