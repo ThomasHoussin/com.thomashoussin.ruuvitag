@@ -76,10 +76,10 @@ class GatewayDevice extends Homey.Device {
     }
 
     async pollDevice() {
-        console.log("Entering poll loop (Ruuvi Gateway)");
+        this.log("Entering poll loop (Ruuvi Gateway)");
 
         while (this.polling) {
-            console.log(`Updating device ${this.getName()}`);
+            this.log(`Updating device ${this.getName()}`);
             this.setAvailable(true).catch(this.error);
             let settings = this.getSettings();
             let data = this.getData();
@@ -99,10 +99,15 @@ class GatewayDevice extends Homey.Device {
                 .then(fn.checkResponseStatus)
                 .then(result => result.json())
                 .then(json => {
-                    this.updateValues(json.data.tags[data.id]);
+                    const tagData = json?.data?.tags?.[data.id];
+                    if (tagData) {
+                        this.updateValues(tagData);
+                    } else {
+                        this.log(`No data found for device ${data.id}`);
+                    }
                 })
                 .catch(error => {
-                    console.log(`Error with device ${this.getName()} : ${error}`);
+                    this.error(`Error with device ${this.getName()} : ${error}`);
                 })
 
             await this.delay(settings.polling_interval);
@@ -112,24 +117,24 @@ class GatewayDevice extends Homey.Device {
     async updateValues(data) {
         let settings = this.getSettings();
         if (!data) {
-            console.log(`No data when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
+            this.log(`No data when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
             return;
         }
         if (!data?.timestamp) {
-            console.log(`No timestamp in data when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
+            this.log(`No timestamp in data when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
         }
         //discard old data
         if (data?.timestamp && Math.floor(Date.now() / 1000) - parseInt(data.timestamp) > this.getSettings().polling_interval) {
             //Ruuvitag is out of range
-            console.log(`Data too old when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
+            this.log(`Data too old when updating Tag ${this.getName()} with uuid ${this.getData().id}`);
 
             //decreasing TTL
-            console.log(`Decreasing TTL for ruuviTag ${this.getName()} `);
+            this.log(`Decreasing TTL for ruuviTag ${this.getName()} `);
             let TTL = this.getStoreValue('TTL') - 1;
             if (TTL >= 0) this.setStoreValue('TTL', TTL);
-            //marking as away if TTL = 0 
+            //marking as away if TTL = 0
             if (TTL <= 0) {
-                console.log(`Marking ruuviTag ${this.getName()} out of range`);
+                this.log(`Marking ruuviTag ${this.getName()} out of range`);
                 this.setOutsideRange();
             }
             return;
@@ -191,11 +196,11 @@ class GatewayDevice extends Homey.Device {
                 'name': this.getName(),
                 'uuid': this.getData().id
             })
-                .then(function () {
-                    console.log('Done trigger flow card ruuvitag_entered_range');
+                .then(() => {
+                    this.log('Done trigger flow card ruuvitag_entered_range');
                 })
-                .catch(function (error) {
-                    console.log('Cannot trigger flow card ruuvitag_entered_range: ' + error);
+                .catch((error) => {
+                    this.error('Cannot trigger flow card ruuvitag_entered_range: ' + error);
                 });
         }
     }
@@ -218,11 +223,11 @@ class GatewayDevice extends Homey.Device {
                 'name': this.getName(),
                 'uuid': this.getData().id
             })
-                .then(function () {
-                    console.log('Done trigger flow card ruuvitag_exited_range');
+                .then(() => {
+                    this.log('Done trigger flow card ruuvitag_exited_range');
                 })
-                .catch(function (error) {
-                    console.log('Cannot trigger flow card ruuvitag_exited_range: ' + error);
+                .catch((error) => {
+                    this.error('Cannot trigger flow card ruuvitag_exited_range: ' + error);
                 });
         }
     }
