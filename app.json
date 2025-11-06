@@ -1,8 +1,8 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.3.8",
-  "compatibility": ">=6.0.0",
+  "version": "0.4.0",
+  "compatibility": ">=12.2.0",
   "platforms": [
     "local"
   ],
@@ -55,6 +55,7 @@
   "source": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag",
   "support": "https://github.com/ThomasHoussin/com.thomashoussin.ruuvitag",
   "homeyCommunityTopicId": 39495,
+  "esm": true,
   "flow": {
     "triggers": [
       {
@@ -91,11 +92,6 @@
         "en": "Ruuvi Gateway"
       },
       "class": "sensor",
-      "energy": {
-        "batteries": [
-          "CR2477"
-        ]
-      },
       "capabilities": [
         "measure_battery",
         "alarm_battery",
@@ -105,7 +101,15 @@
         "measure_temperature",
         "measure_rssi",
         "acceleration",
-        "onoff"
+        "onoff",
+        "measure_co2",
+        "measure_pm1",
+        "measure_pm25",
+        "measure_pm4",
+        "measure_pm10",
+        "measure_nox_index",
+        "measure_tvoc_index",
+        "measure_aqi"
       ],
       "capabilitiesOptions": {
         "button.resetbattery": {
@@ -117,6 +121,11 @@
             "en": "This will reset alarm battery"
           }
         }
+      },
+      "energy": {
+        "batteries": [
+          "CR2477"
+        ]
       },
       "platforms": [
         "local"
@@ -257,7 +266,7 @@
     {
       "id": "ruuvitag",
       "name": {
-        "en": "RuuviTag"
+        "en": "RuuviTag / Ruuvi Air"
       },
       "class": "sensor",
       "platforms": [
@@ -268,14 +277,22 @@
       ],
       "capabilities": [
         "measure_battery",
+        "alarm_battery",
+        "button.resetbattery",
         "measure_humidity",
         "measure_pressure",
         "measure_temperature",
         "measure_rssi",
         "acceleration",
         "onoff",
-        "alarm_battery",
-        "button.resetbattery"
+        "measure_co2",
+        "measure_pm1",
+        "measure_pm25",
+        "measure_pm4",
+        "measure_pm10",
+        "measure_nox_index",
+        "measure_tvoc_index",
+        "measure_aqi"
       ],
       "capabilitiesOptions": {
         "button.resetbattery": {
@@ -288,14 +305,14 @@
           }
         }
       },
-      "images": {
-        "large": "./drivers/ruuvitag/assets/images/large.png",
-        "small": "./drivers/ruuvitag/assets/images/small.png"
-      },
       "energy": {
         "batteries": [
           "CR2477"
         ]
+      },
+      "images": {
+        "large": "./drivers/ruuvitag/assets/images/large.png",
+        "small": "./drivers/ruuvitag/assets/images/small.png"
       },
       "settings": [
         {
@@ -406,6 +423,31 @@
         "en": "g"
       },
       "decimals": 1
+    },
+    "measure_nox_index": {
+      "type": "number",
+      "title": {
+        "en": "NOX index"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/measure_nox.svg",
+      "decimals": 0,
+      "insights": true
+    },
+    "measure_pm4": {
+      "type": "number",
+      "title": {
+        "en": "PM4"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/measure_PM4.svg",
+      "units": {
+        "en": "μg/m³"
+      },
+      "decimals": 1,
+      "insights": true
     },
     "measure_rssi": {
       "type": "number",

@@ -1,22 +1,52 @@
-# RuuviTag
+# RuuviTag & Ruuvi Air
 
-Adds support for RuuviTag Bluetooth Sensor
+Adds support for Ruuvi Bluetooth Sensors
 
-## About RuuviTag
-RuuviTag is an advanced open-source sensor beacon platform designed to fulfill the needs of business customers, developers, makers, students, and can even be used in your home and as part of your personal endeavours. See https://ruuvi.com/ fore more information. 
+## About Ruuvi
+Ruuvi is an advanced open-source sensor platform designed for business, developers, makers, students, and home automation. See https://ruuvi.com/ for more information.
 
-## RuuviTag driver
-This apps allows integration of RuuviTag and Ruuvitag Pro (RAWv1 and RAWv2 format) in Homey, allowing to monitor :
+## Supported Products
+
+### RuuviTag
+Compact environmental sensor powered by CR2477 battery.
+
+**Supported formats:**
+- Format 3 (RAWv1) - Bluetooth 4
+- Format 5 (RAWv2) - Bluetooth 4
+
+**Capabilities:**
 - Temperature
 - Humidity
 - Pressure
 - Acceleration
-- Battery
-- RSSI
-- Movement (RAWv2 only)
-- Entering/leaving range : it can be used as a BLE beacon, triggering an event when the device enters or leaves the range. The number of attempts scan can be configured per device in device settings.
+- Battery level
+- RSSI (signal strength)
+- Movement detection (RAWv2 only)
+- Entering/leaving range triggers
 
-Scan duration (how long homey listens for BLE advertisment) and polling interval (how long between two scans) can be configured in app settings.
+### Ruuvi Air
+Air quality monitor powered by wall adapter.
+
+**Supported formats:**
+- Format 6 - Bluetooth 4
+- Format E1 (Extended) - Bluetooth 5
+
+**Capabilities:**
+- Temperature
+- Humidity
+- Pressure
+- Air quality: CO2, PM1.0, PM2.5, PM4.0, PM10, NOx index, TVOC index, AQI
+- Luminosity
+- RSSI (signal strength)
+- Entering/leaving range triggers
+
+**Note:** No battery capability (powered device)
+
+## BLE Driver Configuration
+
+Scan duration (how long Homey listens for BLE advertisements) and polling interval (time between scans) can be configured in app settings.
+
+Presence detection uses a configurable TTL system - number of scan attempts can be set per device in device settings.
 
 ## Ruuvi gateway
 This apps allows integration of RuuviTag Gateway in Homey. You need first to activate API-key (bearer token) in Ruuvi Gateway ; see https://docs.ruuvi.com/gw-examples/polling-mode for more information. After that Homey will poll the latest data with timestamps from the gateway. 
@@ -42,6 +72,8 @@ Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+###  v0.4.0
+    - Add support for Ruuvi Air (formats 6 and E1)
 ###  v0.3.5
     - Detects if hostname ends with .local in gateway autodiscovery
 ###  v0.3.4

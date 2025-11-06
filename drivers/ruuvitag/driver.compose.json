@@ -1,21 +1,29 @@
 {
   "id": "ruuvitag",
   "name": {
-    "en": "RuuviTag"
+    "en": "RuuviTag / Ruuvi Air"
   },
   "class": "sensor",
   "platforms": [ "local"],
   "connectivity": [ "ble" ],
   "capabilities": [
     "measure_battery",
+    "alarm_battery",
+    "button.resetbattery",
     "measure_humidity",
     "measure_pressure",
     "measure_temperature",
     "measure_rssi",
     "acceleration",
     "onoff",
-    "alarm_battery",
-    "button.resetbattery"
+    "measure_co2",
+    "measure_pm1",
+    "measure_pm25",
+    "measure_pm4",
+    "measure_pm10",
+    "measure_nox_index",
+    "measure_tvoc_index",
+    "measure_aqi"
   ],
   "capabilitiesOptions": {
     "button.resetbattery": {
@@ -28,12 +36,12 @@
       }
     }
   },
+  "energy": {
+      "batteries": ["CR2477"]
+  },
   "images": {
     "large": "./drivers/ruuvitag/assets/images/large.png",
     "small": "./drivers/ruuvitag/assets/images/small.png"
-  },
-  "energy": {
-    "batteries": [ "CR2477" ]
   },
   "settings": [
     {

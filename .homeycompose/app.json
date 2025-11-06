@@ -1,7 +1,7 @@
 {
   "id": "com.thomashoussin.ruuvitag",
-  "version": "0.3.8",
-  "compatibility": ">=6.0.0",
+  "version": "0.4.0",
+  "compatibility": ">=12.2.0",
   "platforms": [
     "local"
   ],

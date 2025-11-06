@@ -1,0 +1,102 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for the RuuviTag Homey App
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please provide as much detail as possible.
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What kind of feature are you requesting?
+      options:
+        - New capability/measurement
+        - Enhancement to BLE driver
+        - Enhancement to Gateway driver
+        - New flow card/trigger
+        - UI/UX improvement
+        - Integration with other apps
+        - Support for new RuuviTag model
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Use Case
+      description: What problem would this feature solve? What's your use case?
+      placeholder: Describe the problem or use case...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like this to work?
+      placeholder: Describe your proposed solution...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: driver-related
+    attributes:
+      label: Related Driver(s)
+      description: Which driver(s) is this feature related to?
+      multiple: true
+      options:
+        - BLE Direct
+        - RuuviGateway (HTTP/LAN)
+        - Both drivers
+        - Not driver-specific
+    validations:
+      required: false
+
+  - type: dropdown
+    id: ruuvi-product
+    attributes:
+      label: Related Ruuvi Product
+      description: Is this feature specific to a Ruuvi product?
+      options:
+        - Not product-specific
+        - RuuviTag (environmental sensor)
+        - Ruuvi Air (air quality monitor)
+        - Both products
+    validations:
+      required: false
+
+  - type: dropdown
+    id: data-format
+    attributes:
+      label: Related to Data Format
+      description: Is this feature specific to a data format?
+      options:
+        - Not format-specific
+        - Format 3 (RAWv1) - RuuviTag
+        - Format 5 (RAWv2) - RuuviTag
+        - Format 6 - Ruuvi Air
+        - Format E1 - Ruuvi Air
+        - Multiple formats
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information, screenshots, or examples that might help
+    validations:
+      required: false

@@ -1,76 +1,74 @@
-'use strict';
-
-const fn = require('../../lib/function.js');
-const Homey = require('homey');
+import * as fn from '../../lib/function.mjs';
+import Homey from 'homey';
 
 class Tag extends Homey.Device {
-  /**
-   * onInit is called when the device is initialized.
-   */
-  async onInit() {
-      this.log('RuuviTag device has been initialized');
-      //v0.1.0 introduced alarm_battery capability
-      //we check if this capability is supported and add it if necessary
-      if (this.getData().dataformat == 5 && !this.hasCapability('alarm_battery')) {
-          console.log(`Adding capability alarm_battery to Ruuvitag ${this.getName()}`);
-          this.addCapability('alarm_battery');
-      }
+    /**
+     * onInit is called when the device is initialized.
+     */
+    async onInit() {
+        this.log('RuuviTag device has been initialized');
+        //v0.1.0 introduced alarm_battery capability
+        //we check if this capability is supported and add it if necessary
+        if (this.getData().dataformat == 5 && !this.hasCapability('alarm_battery')) {
+            console.log(`Adding capability alarm_battery to Ruuvitag ${this.getName()}`);
+            this.addCapability('alarm_battery');
+        }
 
-      if (this.getData().dataformat == 5 && !this.hasCapability('button.resetbattery')) {
-          console.log(`Adding capability button.resetbattery to Ruuvitag ${this.getName()}`);
-          this.addCapability('button.resetbattery');
-      }
+        if (this.getData().dataformat == 5 && !this.hasCapability('button.resetbattery')) {
+            console.log(`Adding capability button.resetbattery to Ruuvitag ${this.getName()}`);
+            this.addCapability('button.resetbattery');
+        }
 
-      if (this.getData().dataformat == 5) {
-          this.registerCapabilityListener('button.resetbattery', async () => {
-              this.setCapabilityValue('alarm_battery', false).catch(this.error);
-              return;
-          });
-      }
+        if (this.getData().dataformat == 5) {
+            this.registerCapabilityListener('button.resetbattery', async () => {
+                this.setCapabilityValue('alarm_battery', false).catch(this.error);
+                return;
+            });
+        }
 
-      this.addListener('updateTag', this.updateTag);
-   }
+        this.addListener('updateTag', this.updateTag);
+    }
 
 
-  /**
-   * onAdded is called when the user adds the device, called just after pairing.
-   */
+    /**
+     * onAdded is called when the user adds the device, called just after pairing.
+     */
     async onAdded() {
-      // Refreshing devices list
-      this.driver.emit('refreshDevices');
-      this.log('RuuviTag device has been added');
-  }
+        // Refreshing devices list
+        this.driver.emit('refreshDevices');
+        this.log('RuuviTag device has been added');
+    }
 
-  /**
-   * onSettings is called when the user updates the device's settings.
-   * @param {object} event the onSettings event data
-   * @param {object} event.oldSettings The old settings object
-   * @param {object} event.newSettings The new settings object
-   * @param {string[]} event.changedKeys An array of keys changed since the previous version
-   * @returns {Promise<string|void>} return a custom message that will be displayed
-   */
+    /**
+     * onSettings is called when the user updates the device's settings.
+     * @param {object} event the onSettings event data
+     * @param {object} event.oldSettings The old settings object
+     * @param {object} event.newSettings The new settings object
+     * @param {string[]} event.changedKeys An array of keys changed since the previous version
+     * @returns {Promise<string|void>} return a custom message that will be displayed
+     */
     async onSettings({ oldSettings, newSettings, changedKeys }) {
-      this.log('RuuviTag device settings where changed');
-      if (this.getCapabilityValue('onoff')) this.setStoreValue('TTL', newSettings.TTL);
-  }
+        this.log('RuuviTag device settings where changed');
+        if (this.getCapabilityValue('onoff')) this.setStoreValue('TTL', newSettings.TTL);
+    }
 
-  /**
-   * onRenamed is called when the user updates the device's name.
-   * This method can be used this to synchronise the name to the device.
-   * @param {string} name The new name
-   */
-  async onRenamed(name) {
-      this.log('RuuviTag device was renamed');
-  }
+    /**
+     * onRenamed is called when the user updates the device's name.
+     * This method can be used this to synchronise the name to the device.
+     * @param {string} name The new name
+     */
+    async onRenamed(name) {
+        this.log('RuuviTag device was renamed');
+    }
 
-  /**
-   * onDeleted is called when the user deleted the device.
-   */
+    /**
+     * onDeleted is called when the user deleted the device.
+     */
     async onDeleted() {
         // Refreshing devices list
         this.driver.emit('refreshDevices');
-      this.log('RuuviTag device has been deleted');
-  }
+        this.log('RuuviTag device has been deleted');
+    }
 
     async updateTag(bleAdv) {
         console.log(`Updating RuuviTag ${this.getName()}`);
@@ -92,8 +90,16 @@ class Tag extends Homey.Device {
                     this.setCapabilityValue('measure_temperature', fn.readTemperature(dataformat, buffer)).catch(this.error);
                     if (this.hasCapability('measure_pressure')) this.setCapabilityValue('measure_pressure', fn.readPressure(dataformat, buffer)).catch(this.error);
                     if (this.hasCapability('measure_humidity')) this.setCapabilityValue('measure_humidity', fn.readHumidity(dataformat, buffer)).catch(this.error);
-                    this.setCapabilityValue('measure_battery', fn.estimateBattery(fn.readBattery(dataformat, buffer), settings)).catch(this.error);
-                    this.setCapabilityValue('acceleration', fn.computeAcceleration(fn.readAccelerationX(dataformat, buffer), fn.readAccelerationY(dataformat, buffer), fn.readAccelerationZ(dataformat, buffer)) / 1000).catch(this.error);
+                    if (this.hasCapability('measure_battery')) this.setCapabilityValue('measure_battery', fn.estimateBattery(fn.readBattery(dataformat, buffer), settings)).catch(this.error);
+                    if (this.hasCapability('acceleration')) this.setCapabilityValue('acceleration', fn.computeAcceleration(fn.readAccelerationX(dataformat, buffer), fn.readAccelerationY(dataformat, buffer), fn.readAccelerationZ(dataformat, buffer)) / 1000).catch(this.error);
+                    if (this.hasCapability('measure_co2')) this.setCapabilityValue('measure_co2', fn.readCo2(dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_pm25')) this.setCapabilityValue('measure_pm25', fn.readPm25(dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_pm1')) this.setCapabilityValue('measure_pm1', fn.readPm1(dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_pm10')) this.setCapabilityValue('measure_pm10', fn.readPm10(dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_pm4')) this.setCapabilityValue('measure_pm4', fn.readPm4(dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_nox_index')) this.setCapabilityValue('measure_nox_index', fn.readNoxIndex(dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_tvoc_index')) this.setCapabilityValue('measure_tvoc_index', fn.readTvocIndex(dataformat, buffer)).catch(this.error);
+                    if (this.hasCapability('measure_aqi') && (dataformat === 6 || dataformat === 225)) this.setCapabilityValue('measure_aqi', fn.calc_aqi(fn.readPm25(dataformat, buffer), fn.readCo2(dataformat, buffer))).catch(this.error);
 
                     if (this.hasCapability('alarm_motion') && settings.motiondetection) {
                         let last_movement_counter = this.getStoreValue('movement_counter');
@@ -209,4 +215,4 @@ class Tag extends Homey.Device {
     }
 }
 
-module.exports = Tag ;
+export default Tag;

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude-context__index_codebase",
+      "WebFetch(domain:apps.developer.homey.app)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
