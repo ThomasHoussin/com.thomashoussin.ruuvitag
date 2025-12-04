@@ -72,6 +72,9 @@ Feel free to donate to  support the project !
 [<img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RVBS24SPLU922&currency_code=EUR)
 
 # Version History
+###  v0.4.1
+    - Fix deprecated BLE scan duration parameter
+    - Fix empty UUID array parameter in BLE discover call
 ###  v0.4.0
     - Add support for Ruuvi Air (formats 6 and E1)
 ###  v0.3.5
