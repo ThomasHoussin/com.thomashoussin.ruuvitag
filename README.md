@@ -44,7 +44,7 @@ Air quality monitor powered by wall adapter.
 
 ## BLE Driver Configuration
 
-Scan duration (how long Homey listens for BLE advertisements) and polling interval (time between scans) can be configured in app settings.
+Polling interval (time between scans) can be configured in app settings.
 
 Presence detection uses a configurable TTL system - number of scan attempts can be set per device in device settings.
 

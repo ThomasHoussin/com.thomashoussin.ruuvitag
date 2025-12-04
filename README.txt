@@ -18,7 +18,7 @@ Ruuvi Air - Air quality monitor (powered by adapter)
 - No battery capability (powered device)
 
 BLE DRIVER CONFIGURATION:
-Scan duration (how long Homey listens for BLE advertisements) and polling interval (time between scans) can be configured in app settings. Number of scan attempts per device can be set in device settings for presence detection.
+Polling interval (time between scans) can be configured in app settings. Number of scan attempts per device can be set in device settings for presence detection.
 
 This apps allows integration of RuuviTag Gateway in Homey. You need first to activate API-key (bearer token) in Ruuvi Gateway ; see https://docs.ruuvi.com/gw-examples/polling-mode for more information. After that Homey will poll the latest data with timestamps from the gateway. 
 Gateway IP adress should be auto-detected ; you need to enter the bearer token in the next screen, and then choose Ruuvitag to add in Homey. 

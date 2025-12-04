@@ -138,14 +138,12 @@ class RuuviTag extends Homey.Driver {
         while (this.polling) {
             console.log(`Refreshing BLE`);
             let polling_interval = this.homey.settings.get('polling_interval');
-            let scan_duration = this.homey.settings.get('scan_duration');
 
-            //default value for polling and scan
+            //default value for polling
             if (!polling_interval) polling_interval = 60;
-            if (!scan_duration) scan_duration = 20;
 
             //scanning BLE devices
-            let foundDevices = await this.homey.ble.discover(scan_duration * 1000);
+            let foundDevices = await this.homey.ble.discover();
 
             //sending bleAdv to ruuviTag
             for (const ruuvitag of this.ruuvitags) {
