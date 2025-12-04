@@ -145,7 +145,7 @@ class RuuviTag extends Homey.Driver {
             if (!scan_duration) scan_duration = 20;
 
             //scanning BLE devices
-            let foundDevices = await this.homey.ble.discover([], scan_duration * 1000);
+            let foundDevices = await this.homey.ble.discover(scan_duration * 1000);
 
             //sending bleAdv to ruuviTag
             for (const ruuvitag of this.ruuvitags) {
