@@ -3,8 +3,15 @@
   "version": "0.0.1",
   "type": "module",
   "main": "app.mjs",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
   "devDependencies": {
-    "homey": "^3.7.12"
+    "@vitest/coverage-v8": "^4.0.16",
+    "homey": "^3.7.12",
+    "vitest": "^4.0.16"
   },
   "dependencies": {
     "node-fetch": "^3.3.2"
