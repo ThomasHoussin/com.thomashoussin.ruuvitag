@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.0.16",
-    "homey": "^3.7.12",
+    "homey": "^3.12.2",
     "vitest": "^4.0.16"
   },
   "dependencies": {
